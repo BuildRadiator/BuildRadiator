@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.jooby</groupId>
+    <artifactId>jooby-project</artifactId>
+    <version>1.0.2</version>
+  </parent>
+
+  <groupId>com.paulhammant</groupId>
+  <artifactId>green.build</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <name>Green Build</name>
+
+  <properties>
+    <jooby.version>1.1.1</jooby.version>
+
+    <!-- Startup class -->
+    <application.class>greenbuild.GreenBuildMain</application.class>
+  </properties>
+
+  <dependencies>
+    <!-- Server -->
+    <dependency>
+      <groupId>org.jooby</groupId>
+      <artifactId>jooby-netty</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+        <version>21.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jooby</groupId>
+      <artifactId>jooby-jackson</artifactId>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+    </dependency>
+
+    <!-- Tests -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.rest-assured</groupId>
+      <artifactId>rest-assured</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.seleniumhq.selenium.fluent</groupId>
+      <artifactId>fluent-selenium</artifactId>
+      <version>1.17</version>
+      <scope>test</scope>
+    </dependency>
+      <dependency>
+          <groupId>com.thoughtworks.xstream</groupId>
+          <artifactId>xstream</artifactId>
+          <version>1.4.5</version>
+      </dependency>
+
+  </dependencies>
+
+  <build>
+    <finalName>green-build</finalName>
+    <plugins>
+      <!-- Build fat jar -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.18.1</version>
+        <configuration>
+          <excludes>
+            <exclude>**/*</exclude>
+          </excludes>
+        </configuration>
+        <executions>
+          <!-- First execution is Unit tests, stop there if any failures -->
+          <execution>
+            <id>unit-tests</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*Integration*.java</exclude>
+                <exclude>**/*WebDriver*.java</exclude>
+              </excludes>
+              <includes>
+                <include>**/*Unit*.java</include>
+              </includes>
+            </configuration>
+          </execution>
+          <!-- Second execution is Integration tests, stop there if any failures -->
+          <execution>
+            <id>integration-tests</id>
+              <goals>
+                <goal>test</goal>
+              </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*Unit*.java</exclude>
+                <exclude>**/*WebDriver*.java</exclude>
+              </excludes>
+              <includes>
+                <include>**/*Integration*.java</include>
+              </includes>
+            </configuration>
+          </execution>
+          <!-- Third execution is Functional tests, stop there if any failures -->
+          <execution>
+            <id>functional-tests</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <excludes>
+                <exclude>**/*Unit*.java</exclude>
+                <exclude>**/*Integration*.java</exclude>
+              </excludes>
+              <includes>
+                <include>**/*WebDriver*.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

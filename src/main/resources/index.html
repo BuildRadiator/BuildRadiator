@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="googlebot" content="noindex, nofollow">
+	<script type="text/javascript" src="//unpkg.com/vue@latest/dist/vue.js"></script>
+	<title>Green Build</title>
+	<script type='text/javascript'>//<![CDATA[
+    window.onload=function(){
+
+        var radiator = new Vue({
+            el: '#radiator',
+            data: {
+                builds: null,
+				title: location.hash.substr(1).split("/")[1].replace(new RegExp("_", 'g'), " ")
+            },
+            created: function () {
+                this.fetchData()
+            },
+            watch: {
+                currentBranch: 'fetchData'
+            },
+            filters: {
+			},
+            methods: {
+				color: function(status) {
+                    var col;
+
+                    switch(status) {
+                        case "passed":
+                            col = "green";
+                            break;
+                        case "failed":
+                            col = "red";
+                            break;
+                        case "running":
+                            col = "blue";
+                            break;
+                        default:
+                            col = "lightgray";
+                    }
+                    return col;
+				},
+                status: function(status) {
+                    if (status === "") {
+                        return ""
+					}
+                    return "(" + status + ")";
+				},
+                duration: function(step) {
+				    return step.dur + "ms";
+				},
+                fetchData: function () {
+                    var xhr = new XMLHttpRequest();
+                    var self = this;
+                    xhr.open('GET', "/p/" + location.hash.substr(1).split("/")[0]);
+                    xhr.onload = function () {
+                        self.builds = JSON.parse(xhr.responseText).builds;
+                    };
+                    xhr.send()
+					// TOO reload at intervals
+                }
+            }
+        })
+    }//]]> 
+	</script>
+</head>
+<body style="height: 100%">
+<table id="radiator" style="width: 100%; height: 100%">
+	<tr style="width: 100%"><td style="text-align: center; font-size: 300%" colspan="50">{{title}}</td></tr>
+	<tr style="width: 100%" v-for="build in builds">
+		<td style="background-color: darkgray; text-align: center; font-size: 200%">{{ build.num }}</td>
+		<td v-bind:style="'text-align: center; background-color:'+ color(step.status) " v-for="step in build.steps">
+			<span style="font-size: 200%">{{ step.name }}</span><br/>
+			<span>{{ duration(step) }}</span><br/>
+			<span>{{ status(step.status) }}</span>
+		</td>
+	</tr>
+</table>
+</body>
+</html>
