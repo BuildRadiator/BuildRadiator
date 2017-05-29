@@ -1,0 +1,13 @@
+runtime: java
+env: flex
+
+runtime_config:  # Optional
+  jdk: openjdk8
+
+handlers:
+- url: /.*
+  script: this field is required, but ignored
+  secure: always
+
+manual_scaling:
+  instances: 1

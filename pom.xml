@@ -7,20 +7,24 @@
   <parent>
     <groupId>org.jooby</groupId>
     <artifactId>jooby-project</artifactId>
-    <version>1.0.2</version>
+    <version>1.1.2</version>
   </parent>
 
   <groupId>com.paulhammant</groupId>
-  <artifactId>green.build</artifactId>
+  <artifactId>buildradiator</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Green Build</name>
+  <name>Build Radiator</name>
 
   <properties>
-    <jooby.version>1.1.1</jooby.version>
-
-    <!-- Startup class -->
-    <application.class>greenbuild.GreenBuildMain</application.class>
+    <jooby.version>${project.parent.version}</jooby.version>
+    <application.class>com.paulhammant.buildradiator.BuildRadiatorMain</application.class>
+    <!--<buildradiator.trace>true</buildradiator.trace>-->
+    <buildradiator.0>Compile=*</buildradiator.0>
+    <buildradiator.1>Unit Tests=buildradiator/process-test-resources/default-testResources</buildradiator.1>
+    <buildradiator.2>Integration Tests=buildradiator/test/integration-tests</buildradiator.2>
+    <buildradiator.3>Functional Tests=buildradiator/test/functional-tests</buildradiator.3>
+    <buildradiator.4>Package=*</buildradiator.4>
   </properties>
 
   <dependencies>
@@ -28,16 +32,40 @@
     <dependency>
       <groupId>org.jooby</groupId>
       <artifactId>jooby-netty</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-transport-native-epoll</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-        <version>21.0</version>
+      <groupId>com.google.cloud.datastore</groupId>
+      <artifactId>datastore-v1-proto-client</artifactId>
+      <version>1.4.0</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-jdk5</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
       <groupId>org.jooby</groupId>
       <artifactId>jooby-jackson</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jooby</groupId>
+      <artifactId>jooby</artifactId>
+      <classifier>tests</classifier>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>fluent-hc</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <!-- logging -->
@@ -65,16 +93,20 @@
       <version>1.17</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-          <groupId>com.thoughtworks.xstream</groupId>
-          <artifactId>xstream</artifactId>
-          <version>1.4.5</version>
-      </dependency>
 
   </dependencies>
 
+
   <build>
-    <finalName>green-build</finalName>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <finalName>buildradiator</finalName>
     <plugins>
       <!-- Build fat jar -->
       <plugin>
@@ -141,6 +173,54 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>appengine-maven-plugin</artifactId>
+        <version>1.3.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <!-- specify UTF-8, ISO-8859-1 or any other file encoding -->
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>gae</id>
+      <properties>
+        <is_appengine>true</is_appengine>
+      </properties>
+      <dependencies>
+        <!-- Keep this in step with the Netty version in Jooby -->
+        <!-- Google App-engine deployments need this -->
+        <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-transport-native-epoll</artifactId>
+          <version>${netty.version}</version>
+          <classifier>linux-x86_64</classifier>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>dev</id>
+      <properties>
+        <is_appengine>false</is_appengine>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>io.netty</groupId>
+          <artifactId>netty-transport-native-epoll</artifactId>
+          <version>${netty.version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 </project>

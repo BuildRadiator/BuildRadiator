@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta name="robots" content="noindex, nofollow">
+	<meta name="googlebot" content="noindex, nofollow">
+	<script type="text/javascript" src="/vue.min.js"></script>
+	<script type="text/javascript" src="/moment.min.js"></script>
+	<script type="text/javascript" src="/moment-duration-format.js"></script>
+	<title>Build Radiator</title>
+	<script type='text/javascript'>//<![CDATA[
+    window.onload=function(){
+
+        var lhash = location.hash;
+        var hashParts = lhash.substr(1).split("/");
+
+        if (lhash === "") {
+            window.location = "https://github.com/paul-hammant/buildradiator/wiki/Getting-Started";
+		} else {
+            if (hashParts.length < 2) {
+                window.location = "https://github.com/paul-hammant/buildradiator/wiki/Setting-The-Title-For-Your-Radiator";
+			}
+        }
+
+        function mapReplacements(hashParts) {
+            var replacements = {};
+            for (var i = 0; i < hashParts.length; i = i +2) {
+                replacements[hashParts[i]] = hashParts[i+1].replace(new RegExp("_", 'g'), " ");
+            }
+            return replacements;
+        }
+
+        var radiator = new Vue({
+            el: '#radiator',
+            data: {
+                rad: {
+                    builds: [],
+                    lastUpdated: "",
+					ips: []
+				},
+				radiatorCodeCorrect: true,
+                egressIpAddress: "",
+                code: hashParts.shift(),
+				title: hashParts.shift().replace(new RegExp("_", 'g'), " "),
+				replacements: mapReplacements(hashParts),
+                timer: ''
+            },
+            created: function () {
+
+                this.fetchData();
+                this.timer = window.setInterval(this.fetchData, 30000)
+            },
+            filters: {
+                duration: function (dur) {
+                    return moment.duration(dur, "milliseconds").format("h [hrs], m [min], ss [secs]");
+                }
+			},
+            methods: {
+				color: function(status) {
+                    var col;
+
+                    switch(status) {
+                        case "passed":
+                            col = "green";
+                            break;
+                        case "failed":
+                            col = "red";
+                            break;
+                        case "running":
+                            col = "blue";
+                            break;
+                        case "cancelled":
+                            col = "darkgray";
+                            break;
+                        default:
+                            col = "lightgray";
+                    }
+                    return col;
+				},
+                status: function(status) {
+                    if (status === "") {
+                        return ""
+					}
+                    return "(" + status + ")";
+				},
+                sed: function (name) {
+					var rep = this.replacements[name];
+					if (rep === undefined) {
+                        return name;
+					}
+				    return rep
+                },
+                fetchData: function () {
+                    var xhr = new XMLHttpRequest();
+                    var self = this;
+                    xhr.open('GET', "/r/" + self.code);
+                    xhr.setRequestHeader("lastUpdated", self.rad.lastUpdated);
+                    xhr.onload = function () {
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+
+                            if ("undefined" === typeof response.message) {
+                                self.rad = response;
+                                self.rad.ips = self.rad.ips.join(", ");
+                                for (var p = 0; p < self.rad.builds.length; p++) {
+                                    for (var q = 0; q < self.rad.builds[p].steps.length; q++) {
+                                        self.rad.builds[p].steps[q].name = self.sed(self.rad.builds[p].steps[q].name);
+                                    }
+                                }
+
+							} else {
+                                self.radiatorCodeCorrect = false;
+                                self.egressIpAddress = response.egressIpAddress;
+							}
+						}
+                    };
+                    xhr.send()
+                }
+            },
+            destroyed:function(){
+                window.clearInterval(this.fetchData);
+            }
+        })
+    }//]]> 
+	</script>
+</head>
+<body style="height: 100%">
+<div id="radiator" style="width: 100%; height: 100%">
+	<div v-if="radiatorCodeCorrect" style="width: 100%; height: 100%">
+		<table style="width: 100%; height: 100%">
+			<tr style="width: 100%"><td style="<" colspan="50">{{title}}<br/><a style="font-size: 20%" href="//github.com/paul-hammant/BuildRadiator/wiki/Setting-the-title-for-your-radiator">change url to change text</a></td></tr>
+			<tr style="width: 100%" v-for="build in rad.builds">
+				<td v-bind:style="'text-align: center; background-color:'+ color(build.status) ">
+					<span style="font-size: 200%">{{ build.ref }}</span><br/>
+					<span>{{ build.dur | duration }}</span><br/>
+				</td>
+				<td v-bind:style="'text-align: center; background-color:'+ color(step.status) " v-for="step in build.steps">
+					<span style="font-size: 200%">{{ step.name }}</span><br/>
+					<span>{{ step.dur | duration }}</span><br/>
+					<span>{{ status(step.status) }}</span>
+				</td>
+			</tr>
+		</table>
+		<footer>
+			Viewing this radiator is restricted to IP addresses: {{rad.ips}}
+		</footer>
+
+	</div>
+	<div style="font-size: 200%; height: 100%; display: flex; align-items: center; justify-content: center;" v-if="!radiatorCodeCorrect">
+		<div>Radiator code <span style="color: red">{{ code }}</span> not recognized.<br><br>
+			Did you type it correctly?<br><br>
+			Maybe the radiator DOES exist but this <strong>egress</strong><br>TCP/IP address ({{egressIpAddress}}) is not allowed.</div>
+	</div>
+</div>
+</body>
+</html>

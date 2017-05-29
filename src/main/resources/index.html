@@ -1,82 +1,227 @@
 <!DOCTYPE html>
-<html style="height: 100%">
+<html lang="en">
 <head>
-	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-	<meta name="robots" content="noindex, nofollow">
-	<meta name="googlebot" content="noindex, nofollow">
-	<script type="text/javascript" src="//unpkg.com/vue@latest/dist/vue.js"></script>
-	<title>Green Build</title>
-	<script type='text/javascript'>//<![CDATA[
-    window.onload=function(){
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link rel="icon" href="/favicon.ico">
 
-        var radiator = new Vue({
-            el: '#radiator',
-            data: {
-                builds: null,
-				title: location.hash.substr(1).split("/")[1].replace(new RegExp("_", 'g'), " ")
-            },
-            created: function () {
-                this.fetchData()
-            },
-            watch: {
-                currentBranch: 'fetchData'
-            },
-            filters: {
-			},
-            methods: {
-				color: function(status) {
-                    var col;
+    <meta name="theme-color" content="#4CAF50">
+    <title>BuildRadiator.org</title>
 
-                    switch(status) {
-                        case "passed":
-                            col = "green";
-                            break;
-                        case "failed":
-                            col = "red";
-                            break;
-                        case "running":
-                            col = "blue";
-                            break;
-                        default:
-                            col = "lightgray";
-                    }
-                    return col;
-				},
-                status: function(status) {
-                    if (status === "") {
-                        return ""
-					}
-                    return "(" + status + ")";
-				},
-                duration: function(step) {
-				    return step.dur + "ms";
-				},
-                fetchData: function () {
-                    var xhr = new XMLHttpRequest();
-                    var self = this;
-                    xhr.open('GET', "/p/" + location.hash.substr(1).split("/")[0]);
-                    xhr.onload = function () {
-                        self.builds = JSON.parse(xhr.responseText).builds;
-                    };
-                    xhr.send()
-					// TOO reload at intervals
-                }
-            }
-        })
-    }//]]> 
-	</script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+    <style>
+        h1{
+            text-shadow: #525252 0 0 20px;
+            font-weight: bold;
+        }
+
+        h4{
+            font-weight: bold;
+        }
+
+        pre {
+            border: 0;
+            background-color: transparent;
+            white-space:nowrap;
+        }
+
+        .col-md-4 p{
+            color: #555;
+        }
+
+        .credits p{
+            color: #555;
+        }
+
+        .row li{
+            color: #555;
+        }
+
+        .key_features{
+            text-shadow: none;
+            font-weight: bold;
+        }
+
+        .tagline{
+            text-shadow: #525252 0 0 20px;
+        }
+
+        .center{
+            width:300px;
+            margin:0 auto;
+            text-align:left;
+        }
+
+        .custom-image{
+            position: relative;
+            bottom: -110px;
+            padding: 40px;
+            margin: 0 auto;
+            margin-top: -120px;
+            width: 900px;
+            height: auto;
+        }
+
+        .logo-image{
+            height: auto;
+            display: initial;
+        }
+
+        .jumbotron {
+            padding-top: 0;
+            background-color: #aec6cf;
+            color: #ffffff;
+        }
+
+        .navbar-fixed-bottom, .navbar-fixed-top {
+            position: inherit;
+        }
+
+        .navbar-fixed-bottom, .navbar-fixed-top {
+            position: inherit;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+        }
+
+        .navbar-inverse {
+            background-color: #aec6cf;
+            border-color: #aec6cf;
+        }
+
+        .navbar-inverse .navbar-brand {
+            color: #ffffff;
+        }
+
+        .navbar-header{
+            width: 100%;
+        }
+
+    </style>
 </head>
-<body style="height: 100%">
-<table id="radiator" style="width: 100%; height: 100%">
-	<tr style="width: 100%"><td style="text-align: center; font-size: 300%" colspan="50">{{title}}</td></tr>
-	<tr style="width: 100%" v-for="build in builds">
-		<td style="background-color: darkgray; text-align: center; font-size: 200%">{{ build.num }}</td>
-		<td v-bind:style="'text-align: center; background-color:'+ color(step.status) " v-for="step in build.steps">
-			<span style="font-size: 200%">{{ step.name }}</span><br/>
-			<span>{{ duration(step) }}</span><br/>
-			<span>{{ status(step.status) }}</span>
-		</td>
-	</tr>
-</table>
+
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+            <a class="navbar-brand" href="/">BuildRadiator.org</a>
+    </div>
+</nav>
+
+<!-- Main jumbotron for a primary marketing message or call to action -->
+<div class="jumbotron">
+    <div class="container text-center">
+        <span style="margin: auto; width: 50%; display: table">
+            <div style="font-size: 300%; display: table-cell; vertical-align: middle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A Private</div>
+            <img style="display: table-cell" src="https://cloud.githubusercontent.com/assets/82182/26039440/e5f3fa12-38e8-11e7-9cb4-2d9dc0ec57b2.png" class="img-responsive logo-image text-center">
+            <div style="font-size: 300%; display: table-cell; vertical-align: middle">For Your Team</div>
+        </span>
+        <br/>
+        <br/>
+        <p>
+            <i class="tagline">Build Radiators as a Service</i>
+        </p>
+        <p>
+            <a href="/r#ueeusvcipmtsb755uq/Example_Build_Radiator" class="btn btn-link btn-lg">Build Radiator Demo (non updatable)</a>
+        </p>
+        <div>
+            <a href="https://github.com/paul-hammant/buildradiator/wiki/Getting-Started" class="btn btn-primary btn-lg">Getting Started</a>
+            <a href="https://github.com/paul-hammant/buildradiator/wiki/Setting-The-Title-For-Your-Radiator" class="btn btn-default btn-lg">Giving the radiator a title</a>
+        </div>
+    </div>
+    <div class="text-center">
+        <img src="https://cloud.githubusercontent.com/assets/82182/26152799/8c69e2f0-3ad6-11e7-8294-62196ebad748.png" class="img-responsive custom-image">
+    </div>
+</div>
+
+<div class="container">
+    <div class="row text-center">
+        <h2 class="key_features">Key Features</h2>
+    </div>
+    <div class="row" style="vertical-align: text-top">
+        <div class="col-md-4">
+            <h3>🎲 Your radiator will be mounted on a random URL</h3>
+            <p>The JSON for your radiator is mounted ion a random 20-digit URL. The demo radiator has a random directory
+            of <code>ueeusvcipmtsb755uq</code> (90 bits turned into lower case or numeric) which is strong enough protection</p>
+        </div>
+        <div class="col-md-4">
+            <h3>⛔ TCP/IP address restrictions</h3>
+            <p>if you want you can restrict to only certain TCP/IP addresses to be allowed to view and
+                update your radiator. <a href="//github.com/paul-hammant/BuildRadiator/wiki/Restricting-view-&-update-IP-addresses">Restricting view &amp; update TCP/IP addresses</a>.</p>
+        </div>
+        <div class="col-md-4">
+            <h3>📺 Works on Consumer TVs</h3>
+            <p>Some low-end ($200) "Smart" TVs have a functional browser and
+                WiFi capability. One of them can display the radiator 24/7 and be mounted on a wall
+                in your "guest" wifi network, so that it doesn't need a login. <a href="//github.com/paul-hammant/BuildRadiator/wiki/Consumer-Displays">Consumer Displays</a>.</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>&#12953; The server only keeps cryptic references for your project</h3>
+            <p>On the server-side your steps can be '1', '2', '3' (etc) if you want and expand them to <a href="//github.com/paul-hammant/BuildRadiator/wiki/Using-short-step-names">longer
+                step names entirely on the client side</a>. The title similarly is <a href="//github.com/paul-hammant/BuildRadiator/wiki/Setting-the-title-for-your-radiator">set on the client side</a></p>
+        </div>
+        <div class="col-md-4">
+            <h3>&#127959; Integrations for build technologies</h3>
+            <p>So far there is an <a href="//github.com/BuildRadiator/BuildRadiatorEventSpy">extension for Java's Maven build technology</a>, allowing it to publish to buildradiator.org</p>
+        </div>
+        <div class="col-md-4">
+            <h3></h3>
+            <p>6 6 6 </p>
+        </div>
+    </div>
+</div>
+
+<hr>
+
+<div class="container">
+    <div class="row text-center">
+        <div>
+            <h4>Other features including...</h4>
+            <ul class="center" type="square">
+                <li>The raditor only shows the last ten builds</li>
+                <li>2</li>
+                <li>3</li>
+                <li>4</li>
+                <ul>
+                    <li>4b</li>
+                </ul>
+                <li>5</li>
+                <ul>
+                    <li>5b</li>
+                </ul>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<hr>
+
+<div class="container">
+    <div class="text-center">
+        <h2 class="key_features">Contribute</h2>
+    </div>
+    <div>
+        <p>The Project is open source on GitHub: <a href="https://github.com/paul-hammant/buildradiator">github.com/paul-hammant/buildradiator</a></p>
+    </div>
+</div>
+
+<hr>
+
+<footer>
+    <p class="text-center">&copy; 2017 <a href="https://paulhammant.com/">Paul Hammant and friends</a>.</p>
+</footer>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/js/ie10-viewport-bug-workaround.js"></script>
 </body>
 </html>
+<!-- landing page from https://github.com/amitmerchant1990/responsive-project-landing-page - thanks Amit -->
