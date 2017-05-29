@@ -8,9 +8,9 @@
 
 The service above will hold radiator state for 10 builds, per radiator. You can go and make your own radiator on
 it, and then place a TV/monitor on a wall somewhere to show that page in a browser. You could choose a 
-[SmartTV](//github.com/paul-hammant/buildradiator/wiki/Compatible-SmartTVs) or an 
-[Amazon Fire TV stick](//github.com//paul-hammant/buildradiator/wiki/Amazon-Fire-TV-Stick) with a conventional TV, or an 
-[AppleTV](//github.com//paul-hammant/buildradiator/wiki/AppleTV). All of those are for TV solutions. You can dedicate a 
+[SmartTV](//github.com/BuildRadiator/BuildRadiator/wiki/Compatible-SmartTVs) or an 
+[Amazon Fire TV stick](//github.com/BuildRadiator/BuildRadiator/wiki/Amazon-Fire-TV-Stick) with a conventional TV, or an 
+[AppleTV](//github.com/BuildRadiator/BuildRadiator/wiki/AppleTV). All of those are for TV solutions. You can dedicate a 
 regular PC too, but you need to solve the "how to leave it logged in, and the screen-saver off" problem yourself.
 
 
@@ -35,13 +35,13 @@ The server is never given parts of the URL to the right of the `#`.
 
 # Creating Radiators
 
-[See Wiki Page](//github.com//paul-hammant/buildradiator/wiki/Getting-Started)
+[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Getting-Started)
 
 # Updating the radiator from your CI daemon
  
-[See Wiki Page](//github.com//paul-hammant/buildradiator/wiki/Updating-the-status-of-a-build)
+[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Updating-the-status-of-a-build)
 
-There's an extension for Maven, that does the step updates, too: [Build Radiator Event Spy](//github.com/paul-hammant/BuildRadiatorEventSpy)
+There's an extension for Maven, that does the step updates, too: [Build Radiator Event Spy](//github.com/BuildRadiator/BuildRadiatorEventSpy)
 
 # Navigating to your radiator
 

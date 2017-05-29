@@ -15,10 +15,10 @@
         var hashParts = lhash.substr(1).split("/");
 
         if (lhash === "") {
-            window.location = "https://github.com/paul-hammant/buildradiator/wiki/Getting-Started";
+            window.location = "https://github.com/BuildRadiator/BuildRadiator/wiki/Getting-Started";
 		} else {
             if (hashParts.length < 2) {
-                window.location = "https://github.com/paul-hammant/buildradiator/wiki/Setting-The-Title-For-Your-Radiator";
+                window.location = "https://github.com/BuildRadiator/BuildRadiator/wiki/Setting-The-Title-For-Your-Radiator";
 			}
         }
 
@@ -128,7 +128,7 @@
 <div id="radiator" style="width: 100%; height: 100%">
 	<div v-if="radiatorCodeCorrect" style="width: 100%; height: 100%">
 		<table style="width: 100%; height: 100%">
-			<tr style="width: 100%"><td style="<" colspan="50">{{title}}<br/><a style="font-size: 20%" href="//github.com/paul-hammant/BuildRadiator/wiki/Setting-the-title-for-your-radiator">change url to change text</a></td></tr>
+			<tr style="width: 100%"><td style="<" colspan="50">{{title}}<br/><a style="font-size: 20%" href="//github.com/BuildRadiator/BuildRadiator/wiki/Setting-the-title-for-your-radiator">change url to change text</a></td></tr>
 			<tr style="width: 100%" v-for="build in rad.builds">
 				<td v-bind:style="'text-align: center; background-color:'+ color(build.status) ">
 					<span style="font-size: 200%">{{ build.ref }}</span><br/>
