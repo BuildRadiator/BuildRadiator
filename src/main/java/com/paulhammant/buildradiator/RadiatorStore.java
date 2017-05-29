@@ -26,9 +26,11 @@ public class RadiatorStore {
     final Map<String, Radiator> actualRadiators = new ConcurrentHashMap<>();
     private final Map<String, Long> radiatorLastSavedTimes = new ConcurrentHashMap<>();
     private boolean saverShouldKeepGoing = true;
-    private boolean onAppEngine = false;
 
     RadiatorStore() {
+        this(false);
+    }
+    RadiatorStore(boolean onAppEngine) {
         Thread saver = new Thread(() -> {
             while (saverShouldKeepGoing) {
                 processRadiatorsToSave();
@@ -50,11 +52,6 @@ public class RadiatorStore {
                 System.out.println(".. ready for shutdown");
             }
         }));
-    }
-
-    public RadiatorStore onAppEngine(boolean onAppEngine) {
-        this.onAppEngine = onAppEngine;
-        return this;
     }
 
     protected int getMillisToDelay() {
@@ -118,10 +115,10 @@ public class RadiatorStore {
         private ObjectMapper om = new ObjectMapper();
 
         public BackedByGoogleCloudDataStore() {
-            super();
+            super(true);
 
             // Set the project ID from the command line parameters.
-            String projectId = getAppEngineId();
+            String projectId = System.getenv("GCLOUD_PROJECT");
 
             // Setup the connection to Google Cloud Datastore and infer credentials
             // from the environment.
@@ -131,21 +128,6 @@ public class RadiatorStore {
             } catch (GeneralSecurityException | IOException e) {
                 throw new RuntimeException(e);
             }
-        }
-
-        private String getAppEngineId() {
-            Properties properties = new Properties();
-            InputStream resourceAsStream = BuildRadiatorApp.class.getClassLoader().getResourceAsStream("props.properties");
-            if (resourceAsStream != null) {
-                try {
-                    properties.load(resourceAsStream);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            String gae_appId = properties.getProperty("gae_appId");
-            System.out.println(">> gae_appId: " + gae_appId);
-            return gae_appId;
         }
 
         @Override

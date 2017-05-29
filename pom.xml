@@ -192,9 +192,6 @@
   <profiles>
     <profile>
       <id>gae</id>
-      <properties>
-        <is_appengine>true</is_appengine>
-      </properties>
       <dependencies>
         <!-- Keep this in step with the Netty version in Jooby -->
         <!-- Google App-engine deployments need this -->
@@ -208,9 +205,6 @@
     </profile>
     <profile>
       <id>dev</id>
-      <properties>
-        <is_appengine>false</is_appengine>
-      </properties>
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>

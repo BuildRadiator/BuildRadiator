@@ -20,19 +20,20 @@ public class BuildRadiatorApp extends Jooby {
     protected final RadiatorStore radiatorStore;
 
     {
+
+        String gae_appId = System.getenv("GCLOUD_PROJECT");
+
         use(new Jackson());
 
-        boolean onAppEngine = isOnAppEngine();
-        if (onAppEngine) {
+        if (gae_appId != null) {
             radiatorStore = new RadiatorStore.BackedByGoogleCloudDataStore();
         } else {
             radiatorStore = new RadiatorStore();
         }
-        radiatorStore.onAppEngine(onAppEngine);
 
         before((req, rsp) -> {
             try {
-                if (onAppEngine && req.header("X-Forwarded-Proto").value().equals("http")) {
+                if (gae_appId != null && req.header("X-Forwarded-Proto").value().equals("http")) {
                     rsp.redirect("https://" + req.hostname() + req.path());
                 }
             } catch (Throwable throwable) {
@@ -95,19 +96,6 @@ public class BuildRadiatorApp extends Jooby {
 
         onStart(this::starterData);
 
-    }
-
-    private boolean isOnAppEngine() {
-        Properties properties = new Properties();
-        InputStream resourceAsStream = BuildRadiatorApp.class.getClassLoader().getResourceAsStream("props.properties");
-        if (resourceAsStream != null) {
-            try {
-                properties.load(resourceAsStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        return properties.getProperty("is_appengine").equals("true");
     }
 
     protected void serveRadiatorPage() {
