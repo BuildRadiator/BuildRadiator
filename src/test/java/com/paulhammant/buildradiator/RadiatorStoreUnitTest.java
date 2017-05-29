@@ -40,6 +40,8 @@ public class RadiatorStoreUnitTest {
         Radiator rad = new RadiatorStore().createRadiator(new TestRandomGenerator("QWERTY", "sseeccrreett"), "A")
                 .withIpAccessRestrictedToThese("123.123.123.122", "2001:0db8:85a3:0000:0000:8a2e:0370:7334");
         assertThat(rad.code, equalTo("QWERTY"));
+        assertThat(rad.codeAndSecretOnly().code, equalTo("QWERTY"));
+        assertThat(rad.codeAndSecretOnly().secret, equalTo("sseeccrreett"));
     }
 
     @Test

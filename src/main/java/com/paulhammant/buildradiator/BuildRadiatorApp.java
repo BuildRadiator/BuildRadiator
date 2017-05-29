@@ -7,10 +7,6 @@ import org.jooby.Request;
 import org.jooby.Response;
 import org.jooby.json.Jackson;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class BuildRadiatorApp extends Jooby {
 
@@ -212,10 +208,9 @@ public class BuildRadiatorApp extends Jooby {
         if (ips.length == 1 && ips[0].equals("")) {
             ips = new String[0];
         }
-        Radiator rad = getResultsStore().createRadiator(require(RandomGenerator.class), stepNames).withIpAccessRestrictedToThese(ips);
-        final CreatedRadiator createdRadiator = new CreatedRadiator();
         rsp.type("application/json");
-        rsp.send(createdRadiator.withCode(rad.code, rad.secret));
+        rsp.send(getResultsStore().createRadiator(require(RandomGenerator.class), stepNames)
+                .withIpAccessRestrictedToThese(ips).codeAndSecretOnly());
     }
 
     protected void nothingHere(Request req, Response rsp) throws Throwable {

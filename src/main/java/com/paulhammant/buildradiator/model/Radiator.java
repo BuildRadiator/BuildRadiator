@@ -109,4 +109,11 @@ public class Radiator {
         }
         return this;
     }
+
+    public CreatedRadiator codeAndSecretOnly() {
+        CreatedRadiator cr = new CreatedRadiator();
+        cr.code = code;
+        cr.secret = secret;
+        return cr;
+    }
 }
