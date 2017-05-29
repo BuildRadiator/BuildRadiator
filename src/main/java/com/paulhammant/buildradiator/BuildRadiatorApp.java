@@ -137,9 +137,8 @@ public class BuildRadiatorApp extends Jooby {
         String step = getStepButVerifyParamFirst(req);
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
         String secret = getRadiatorSecretButVerifyParamFirst(req);
-
-        rsp.send(getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).startStep(build, step)
-                ? "OK" : "StepNotFound");
+        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).startStep(build, step);
+        rsp.send("OK");
     }
 
     protected void stepPassed(Request req, Response rsp) throws Throwable {
@@ -148,9 +147,8 @@ public class BuildRadiatorApp extends Jooby {
         String build = getBuildIdButVerifyParamFirst(req);
         String step = getStepButVerifyParamFirst(req);
         String secret = getRadiatorSecretButVerifyParamFirst(req);
-
-        rsp.send(getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, step)
-                ? "OK" : "StepNotFound");
+        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, step);
+        rsp.send("OK");
     }
 
     protected void stepPassedAndStartStep(Request req, Response rsp) throws Throwable {
@@ -160,10 +158,10 @@ public class BuildRadiatorApp extends Jooby {
         String step = getStepButVerifyParamFirst(req);
         String pStep = getPreviousStepButVerifyParamFirst(req);
         String secret = getRadiatorSecretButVerifyParamFirst(req);
+        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, pStep);
+        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).startStep(build, step);
+        rsp.send("OK");
 
-        rsp.send(getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, pStep)
-                ? getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).startStep(build, step)
-                ? "OK" : "StepNotFound" : "StepNotFound");
     }
 
     private String getRadiatorCodeButVerifyParamFirst(Request req) {
@@ -203,9 +201,8 @@ public class BuildRadiatorApp extends Jooby {
         String build = getBuildIdButVerifyParamFirst(req);
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
         String secret = getRadiatorSecretButVerifyParamFirst(req);
-
-        rsp.send(getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepFailed(build, step)
-                ? "OK" : "StepNotFound");
+        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepFailed(build, step);
+        rsp.send("OK");
     }
 
     protected void buildCancelled(Request req, Response rsp) throws Throwable {

@@ -8,7 +8,7 @@ import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 
-public class BuildTest {
+public class BuildUnitTest {
 
     @Test
     public void cancellationShouldNotAffectStepThatHasPassed() {

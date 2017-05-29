@@ -8,7 +8,7 @@ import static com.paulhammant.buildradiator.model.TestRadBuilder.step;
 import static com.paulhammant.buildradiator.model.TestRadBuilder.stepNames;
 import static junit.framework.TestCase.fail;
 
-public class RadiatorTest {
+public class RadiatorUnitTest {
 
     @Test
     public void stepPassedForUnknownBuildShouldHaveBarfed() {

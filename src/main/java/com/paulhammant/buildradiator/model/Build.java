@@ -20,7 +20,7 @@ public class Build {
         }
     }
 
-    public boolean start(String step) {
+    public void start(String step) {
         started = System.currentTimeMillis();
         if (!status.equals("") && !status.equals("running")) {
             throw new WrongBuildState();
@@ -29,13 +29,13 @@ public class Build {
             if (s.name.equals(step)) {
                 s.start();
                 status = "running";
-                return true;
+                return;
             }
         }
-        return false;
+        throw new UnknownStep();
     }
 
-    public boolean pass(String step) {
+    public void pass(String step) {
         if (!status.equals("running")) {
             throw new WrongBuildState();
         }
@@ -50,12 +50,14 @@ public class Build {
                 passed = false;
             }
         }
+        if (!found) {
+            throw new UnknownStep();
+        }
         status = passed ? "passed" : status;
         dur = (int) (System.currentTimeMillis() - started);
-        return found;
     }
 
-    public boolean fail(String step) {
+    public void fail(String step) {
         if (!status.equals("running")) {
             throw new WrongBuildState();
         }
@@ -72,9 +74,11 @@ public class Build {
                 s.skipped();
             }
         }
+        if (!found) {
+            throw new UnknownStep();
+        }
         status = "failed";
         dur = (int) (System.currentTimeMillis() - started);
-        return found;
     }
 
     public void cancel() {

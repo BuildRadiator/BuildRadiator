@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.paulhammant.buildradiator.model.Build;
 import com.paulhammant.buildradiator.model.Radiator;
 import com.paulhammant.buildradiator.model.Step;
+import com.paulhammant.buildradiator.model.UnknownStep;
 import org.hamcrest.Matcher;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 public class RadiatorUnitTest {
 
@@ -76,7 +78,11 @@ public class RadiatorUnitTest {
     @Test
     public void radiatorCanIgnoreABogusStepName() throws InterruptedException, JsonProcessingException {
         Radiator rad = new RadiatorStore().createRadiator(new TestRandomGenerator("X", "sseeccrreett"), "A");
-        assertFalse(rad.startStep("1", "NoMatch"));
+        try {
+            rad.startStep("1", "NoMatch");
+            fail();
+        } catch (UnknownStep e) {
+        }
 
         assertRadiatorsEqual(rad, rad("X", "sseeccrreett", stepNames("A"),
                 build("1", "", step("A", 0, ""))));

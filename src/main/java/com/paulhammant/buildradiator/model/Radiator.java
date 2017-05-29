@@ -34,38 +34,41 @@ public class Radiator {
         return this;
     }
 
-    public boolean startStep(String buildNum, String step) {
+    public void startStep(String buildNum, String step) {
         lastUpdated = System.currentTimeMillis();
         for (Build build : this.builds) {
             if (build.ref.equals(buildNum)) {
-                return build.start(step);
+                build.start(step);
+                return;
             }
         }
         // build not found
         synchronized (builds) {
             builds.add(0, new Build(buildNum, stepNames));
-            if (builds.size() == 11) {
+            if (builds.size() > 10) {
                 builds.remove(10);
             }
-            return startStep(buildNum, step);
+            startStep(buildNum, step);
         }
     }
 
-    public boolean stepPassed(String buildRef, String step) {
+    public void stepPassed(String buildRef, String step) {
         lastUpdated = System.currentTimeMillis();
         for (Build build : this.builds) {
             if (build.ref.equals(buildRef)) {
-                return build.pass(step);
+                build.pass(step);
+                return;
             }
         }
         throw new UnknownBuild();
     }
 
-    public boolean stepFailed(String buildRef, String step) {
+    public void stepFailed(String buildRef, String step) {
         lastUpdated = System.currentTimeMillis();
         for (Build build : this.builds) {
             if (build.ref.equals(buildRef)) {
-                return build.fail(step);
+                build.fail(step);
+                return;
             }
         }
         throw new UnknownBuild();

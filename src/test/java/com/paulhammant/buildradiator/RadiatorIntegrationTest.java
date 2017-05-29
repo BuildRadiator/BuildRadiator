@@ -330,7 +330,7 @@ public class RadiatorIntegrationTest {
                 .post("/r/" + app.radCode + "/startStep")
                 .then()
                 .statusCode(200)
-                .body(equalTo("StepNotFound"));
+                .body(equalTo("unknown step"));
 
         assertThat(app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps.get(0).toString(),
                 startsWith("Step{name='A', dur=0, status='', started=0"));
