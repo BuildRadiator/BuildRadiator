@@ -52,7 +52,7 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage("xxx");
 
-        FWD.td().getText().shouldBe("Main Project Trunk Build\nchange url to change text");
+        FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nA\n0 secs\n(running) B\n0 secs\nC\n0 secs");
         FWD.trs().get(2).getText().shouldBe("1\n4 secs\nA\n0 secs\n(failed) B\n0 secs\n(skipped) C\n0 secs\n(skipped)");
     }
@@ -63,7 +63,7 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage("xxx", "/A/Ant/B/Bat/C/Clever_Cat");
 
-        FWD.td().getText().shouldBe("Main Project Trunk Build\nchange url to change text");
+        FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nAnt\n0 secs\n(running) Bat\n0 secs\nClever Cat\n0 secs");
         FWD.trs().get(2).getText().shouldBe("1\n4 secs\nAnt\n0 secs\n(failed) Bat\n0 secs\n(skipped) Clever Cat\n0 secs\n(skipped)");
     }

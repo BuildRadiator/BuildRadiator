@@ -243,11 +243,12 @@ public class BuildRadiatorApp extends Jooby {
 
     private void starterData() {
         RadiatorStore store = getResultsStore();
-        String C = "Compile";
-        String UT = "Unit Tests";
-        String IT = "Integration Tests";
-        String FT = "Functional Tests";
-        String P = "Package";
+
+        //  c = compile
+        //  u = unit tests
+        //  i = integration tests
+        //  f = functional tests
+        //  p = package
 
         // Recreate the demo radiator each boot of the stack.
         Radiator radiator = store.createRadiator(new RandomGenerator() {
@@ -259,56 +260,57 @@ public class BuildRadiatorApp extends Jooby {
             protected String generateSecret() {
                 return NO_UPDATES;
             }
-        }, C, UT, IT, FT, P);
-        radiator.startStep("111", C);
-        radiator.stepPassed("111", C);
+        }, "c", "u", "i", "f", "p");
+
+        radiator.startStep("111", "c");
+        radiator.stepPassed("111", "c");
         radiator.builds.get(0).steps.get(0).dur = 31230;
-        radiator.startStep("111", UT);
-        radiator.stepPassed("111", UT);
+        radiator.startStep("111", "u");
+        radiator.stepPassed("111", "u");
         radiator.builds.get(0).steps.get(1).dur = 46610;
-        radiator.startStep("111", IT);
-        radiator.stepPassed("111", IT);
+        radiator.startStep("111", "i");
+        radiator.stepPassed("111", "i");
         radiator.builds.get(0).steps.get(2).dur = 120000;
-        radiator.startStep("111", FT);
-        radiator.stepPassed("111", FT);
+        radiator.startStep("111", "f");
+        radiator.stepPassed("111", "f");
         radiator.builds.get(0).steps.get(3).dur = 180020;
-        radiator.startStep("111", P);
-        radiator.stepPassed("111", P);
+        radiator.startStep("111", "p");
+        radiator.stepPassed("111", "p");
         radiator.builds.get(0).steps.get(4).dur = 22200;
         radiator.builds.get(0).dur = 185000;
 
-        radiator.startStep("112", C);
-        radiator.stepPassed("112", C);
+        radiator.startStep("112", "c");
+        radiator.stepPassed("112", "c");
         radiator.builds.get(0).steps.get(0).dur = 33300;
-        radiator.startStep("112", UT);
-        radiator.stepPassed("112", UT);
+        radiator.startStep("112", "u");
+        radiator.stepPassed("112", "u");
         radiator.builds.get(0).steps.get(1).dur = 45500;
-        radiator.startStep("112", IT);
-        radiator.stepPassed("112", IT);
+        radiator.startStep("112", "i");
+        radiator.stepPassed("112", "i");
         radiator.builds.get(0).steps.get(2).dur = 123400;
-        radiator.startStep("112", FT);
-        radiator.stepPassed("112", FT);
+        radiator.startStep("112", "f");
+        radiator.stepPassed("112", "f");
         radiator.builds.get(0).steps.get(3).dur = 173000;
-        radiator.startStep("112", P);
-        radiator.stepPassed("112", P);
+        radiator.startStep("112", "p");
+        radiator.stepPassed("112", "p");
         radiator.builds.get(0).steps.get(4).dur = 21100;
         radiator.builds.get(0).dur = 215300;
 
-        radiator.startStep("113", C);
-        radiator.stepPassed("113", C);
+        radiator.startStep("113", "c");
+        radiator.stepPassed("113", "c");
         radiator.builds.get(0).steps.get(0).dur = 31000;
-        radiator.startStep("113", UT);
-        radiator.stepFailed("113", UT);
+        radiator.startStep("113", "u");
+        radiator.stepFailed("113", "u");
         radiator.builds.get(0).steps.get(1).dur = 42600;
         radiator.builds.get(0).dur = 68300;
 
-        radiator.startStep("114", C);
-        radiator.stepPassed("114", C);
+        radiator.startStep("114", "c");
+        radiator.stepPassed("114", "c");
         radiator.builds.get(0).steps.get(0).dur = 800;
-        radiator.startStep("114", UT);
-        radiator.stepPassed("114", UT);
+        radiator.startStep("114", "u");
+        radiator.stepPassed("114", "u");
         radiator.builds.get(0).steps.get(1).dur = 42600;
-        radiator.startStep("114", IT);
+        radiator.startStep("114", "i");
         radiator.builds.get(0).dur = 43300;
     }
 
