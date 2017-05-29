@@ -7,12 +7,9 @@
 [buildraditor.org](https://buildraditor.org)
 
 The service above will hold radiator state for 10 builds, per radiator. You can go and make your own radiator on
-it, and then place a TV/monitor on a wall somewhere to show that page in a browser. You could choose a 
-[SmartTV](//github.com/BuildRadiator/BuildRadiator/wiki/Compatible-SmartTVs) or an 
-[Amazon Fire TV stick](//github.com/BuildRadiator/BuildRadiator/wiki/Amazon-Fire-TV-Stick) with a conventional TV, or an 
-[AppleTV](//github.com/BuildRadiator/BuildRadiator/wiki/AppleTV). All of those are for TV solutions. You can dedicate a 
+it, and then place a TV/monitor on a wall somewhere to show that page in a browser. You could choose a consumer device like a
+[SmartTV, Amazon Fire TV stick, AppleTV](//github.com/BuildRadiator/BuildRadiator/wiki/Consumer-Displays), etc. You can dedicate a 
 regular PC too, but you need to solve the "how to leave it logged in, and the screen-saver off" problem yourself.
-
 
 ## Security through obscurity
 
@@ -20,28 +17,17 @@ We admit, `buildradiator.org` is [security through obscurity](https://en.wikiped
 
 Every time a radiator is created, there's a **random code** that is generated. An example is `ueeusvcipmtsb755uq` (made for the 
 demo radiator that can't be updated). Unless someone knows the code, they can't see your radiator. There is no list of radiators
-either. If you lost your radiaor code, just made a new one and the old one will be deleted after a couple of weeks of non-use.
-
-
-
-### The Server side doesn't know the "name" of your radiator
-
-That's handled in the browser exclusively:
-
-Compare [https://buildradiator.org/r#ueeusvcipmtsb755uq/Goldman_Sachs_Top_Secret_Quantum_Sniping_Automatic_Trader](https://buildradiator.org/r#ueeusvcipmtsb755uq/Goldman_Sachs_Top_Secret_Quantum_Sniping_Automatic_Trader) to
-[https://buildradiator.org/r#ueeusvcipmtsb755uq/These_Are_Not_The_Droids_You_Are_Looking_For](https://buildradiator.org/r#ueeusvcipmtsb755uq/These_Are_Not_The_Droids_You_Are_Looking_For).
+either. If you lost your radiator code, just made a new one and the old one will be deleted after a couple of weeks of non-use.
 
 The server is never given parts of the URL to the right of the `#`.
 
 # Creating Radiators
 
-[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Getting-Started)
+[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Creating-a-radiator)
 
 # Updating the radiator from your CI daemon
  
-[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Updating-the-status-of-a-build)
-
-There's an extension for Maven, that does the step updates, too: [Build Radiator Event Spy](//github.com/BuildRadiator/BuildRadiatorEventSpy)
+[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Updating-build-step-changes-from-CI)
 
 # Navigating to your radiator
 
@@ -77,5 +63,5 @@ The build does:
 This is to the "Flexible" AppEngine for Java variant, and not the traditional one.
 
 ```
-mvn -Pgae -DskipTests appengine:deploy -Dgae_appId=<appID of your app on GoogleAppEngine>
+mvn -Pgae -DskipTests appengine:deploy
 ```
