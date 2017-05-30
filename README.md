@@ -23,11 +23,13 @@ The server is never given parts of the URL to the right of the `#`.
 
 # Creating Radiators
 
-[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Creating-a-radiator)
+[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Creating-a-radiator). Also detailed there is info on
+locking the radiator to certain IP addresses.
 
 # Updating the radiator from your CI daemon
  
-[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Updating-build-step-changes-from-CI)
+[See Wiki Page](//github.com/BuildRadiator/BuildRadiator/wiki/Updating-build-step-changes-from-CI). Also detailed
+there is how a secret is passed to buildradiator.org that ensures that only approved CI jobs update build statuses. 
 
 # Navigating to your radiator
 
@@ -35,8 +37,13 @@ Type `https://buildradiator.org/r#<the radiator ID frome the create step>/A_Long
 
 Be aware that a HTML page is loaded in the browser for `https://buildradiator.org/r` and that in turn 
 seeks a JSON payload -  `https://buildradiator.org/r/<the radiator ID frome the create step>`. Any other attribute
-to the right of the `#` is [not passed to the browser](https://en.wikipedia.org/wiki/Fragment_identifier) so you can 
+to the right of the `#` is not passed to the browse so you can 
 knock yourself out with secret project names, etc. 
+[Read more on the wiki page](https://github.com/BuildRadiator/BuildRadiator/wiki/Setting-the-title-and-expanding-step-codes-in-the-UI)
+
+# Putting a screen up in your guest WiFi
+
+[See Wiki Page on consumer displays](//github.com/BuildRadiator/BuildRadiator/wiki/Consumer-Displays)
 
 # Building the application yourself
 
@@ -44,23 +51,24 @@ knock yourself out with secret project names, etc.
 mvn clean install
 ```
 
-The build does: 
+In about 25 seconds, the build does: 
 
 1. compile, 
 2. unit test compile, 
 3. unit test invocation, 
 4. integration test invocation, 
 5. functional test invocation (WebDriver)
-6. distribution creation (uberjar style)
+6. distribution creation (uberjar style jar)
 
-## Prerequsites
+## Build prerequsites
 
 1. Chromedriver.exe for your platform (homebrew has it)
 2. Maven 3+
 
 ## Deploying to Google AppEngine
 
-This is to the "Flexible" AppEngine for Java variant, and not the traditional one.
+This is to the "Flexible" AppEngine for Java variant, and not the traditional one. 
+It also needs a 'datastore' that is connected to the AppEngine app/project, but the schema is setup automatically on boot.
 
 ```
 mvn -Pgae -DskipTests appengine:deploy
