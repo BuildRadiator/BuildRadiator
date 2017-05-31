@@ -15,7 +15,12 @@ public class TestVersionOfBuildRadiatorApp extends BuildRadiatorApp {
                 radiatorStore.actualRadiators.put(testRadiator.code, testRadiator);
             }
             appStarted = true;
+            deleteDefaultRadiator();
         });
+    }
+
+    protected void deleteDefaultRadiator() {
+        radiatorStore.actualRadiators.remove(DEMO_RADIATOR_CODE);
     }
 
     protected void serveIndexPageButWithReplacement(String from, String to) {

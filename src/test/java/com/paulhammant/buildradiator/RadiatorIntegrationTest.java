@@ -21,6 +21,7 @@ import static com.paulhammant.buildradiator.hamcrest.IgnoringLastUpdatedIsTheSam
 import static com.paulhammant.buildradiator.model.TestRadBuilder.*;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
 import static java.lang.String.join;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.fail;
@@ -30,20 +31,6 @@ import static org.hamcrest.Matchers.*;
 public class RadiatorIntegrationTest {
 
     private TestVersionOfBuildRadiatorApp app;
-
-    private final String RAD_CODE = "RAD_CODE";
-    private final String SECRET = "XYZ";
-    private final RandomGenerator codeGenerator = new RandomGenerator() {
-        @Override
-        protected String generateRadiatorCode() {
-            return RAD_CODE;
-        }
-
-        @Override
-        protected String generateSecret() {
-            return SECRET;
-        }
-    };
 
     @Before
     public void setup() {
@@ -76,9 +63,9 @@ public class RadiatorIntegrationTest {
 
         given()
                 .params("stepNames", join(",", "P_P", "Q q", "R-R"))
-                .when()
+            .when()
                 .post("/r/create")
-                .then()
+            .then()
                 .statusCode(200)
                 .body(hasNewRadiator("P P", "Q q", "R-R"));
     }
@@ -91,9 +78,9 @@ public class RadiatorIntegrationTest {
 
         given()
                 .params("stepNames", join(",", "short1,short 2,1234567890123456789012"))
-                .when()
+            .when()
                 .post("/r/create")
-                .then()
+            .then()
                 .statusCode(200)
                 .body(equalTo("a stepName parameter too long"));
     }
@@ -104,13 +91,20 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
+
+
         given()
-                .params("stepNames", join(",", "short1,short 2,short 333"))
-                .when()
+                .params("stepNames", join(",", "short1", "short 2", "short 333"))
+            .when()
                 .post("/r/create")
-                .then()
+            .then()
                 .statusCode(200)
                 .body(startsWith("{\"code"));
+
+        Radiator rad = app.getResultsStore().actualRadiators.values().iterator().next();
+        assertThat(rad.code.length(), greaterThan(10));
+        assertThat(rad.secret.length(), greaterThan(8));
+        assertThat(rad.stepNames, equalTo(stepNames("short1", "short 2", "short 333")));
     }
 
     @Test
@@ -203,7 +197,12 @@ public class RadiatorIntegrationTest {
     @Test
     public void demoRadiatorCannotBeUpdated() {
 
-        app = new TestVersionOfBuildRadiatorApp(null);
+        app = new TestVersionOfBuildRadiatorApp(null) {
+            @Override
+            protected void deleteDefaultRadiator() {
+                // nope, don't
+            }
+        };
         startApp();
         assertNotNull(app.radiatorStore.get(DEMO_RADIATOR_CODE, "127.0.0.1"));
 
@@ -361,7 +360,8 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
-        get("/r/wewwewwewe/")
+        when()
+                .get("/r/wewwewwewe/")
             .then()
                 .assertThat()
                 .body(equalTo(("{\"message\":\"nothing here\",\"egressIpAddress\":\"127.0.0.1\"}")))
@@ -375,7 +375,8 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
-        get("/r/")
+        when()
+                .get("/r/")
             .then()
                 .assertThat()
                 .body(containsString("<title>Build Radiator</title>"))
@@ -389,7 +390,8 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
-        get("/r/12345678901234567890123")
+        when()
+                .get("/r/12345678901234567890123")
             .then()
                 .assertThat()
                 .body(equalTo("\"radiatorCode parameter too long\""))
