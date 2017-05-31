@@ -118,7 +118,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "OK");
+        postStepStartedAndConfirmTestResponse("aaa", "sseeccrreett", "1", "A", 200, "OK");
     }
 
     @Test
@@ -130,7 +130,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "ip address 127.0.0.1 not authorized");
+        postStepStartedAndConfirmTestResponse("aaa", "sseeccrreett", "1", "A", 200, "ip address 127.0.0.1 not authorized");
     }
 
     @Test
@@ -141,7 +141,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "OK");
+        postStepStartedAndConfirmTestResponse("aaa", "sseeccrreett", "1", "A", 200, "OK");
 
         assertThat(rad.builds.get(0).steps.get(0).status, equalTo("running"));
     }
@@ -154,7 +154,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "wrong-secret", "1", "A", 200, "secret doesnt match");
+        postStepStartedAndConfirmTestResponse("aaa", "wrong-secret", "1", "A", 200, "secret doesnt match");
 
         assertThat(rad.builds.size(), equalTo(0));
     }
@@ -167,7 +167,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "secret--way--too--long", "1", "A", 200, "secret parameter too long");
+        postStepStartedAndConfirmTestResponse("aaa", "secret--way--too--long", "1", "A", 200, "secret parameter too long");
 
         assertThat(rad.builds.size(), equalTo(0));
     }
@@ -303,7 +303,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "DoesntExist", 200, "unknown step");
+        postStepStartedAndConfirmTestResponse("aaa", "sseeccrreett", "1", "DoesntExist", 200, "unknown step");
 
         Step step = rad.builds.get(0).steps.get(0);
         assertThat(step.status, equalTo(""));
@@ -319,7 +319,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm("aaa", "sseeccrreett", "222", "A", 200, "wrong build state");
+        postStepStartedAndConfirmTestResponse("aaa", "sseeccrreett", "222", "A", 200, "wrong build state");
 
     }
 
@@ -385,12 +385,12 @@ public class RadiatorIntegrationTest {
         app = null;
     }
 
-    private void postStepStartedAndConfirm(String radCode, String secret, String buildId, String stepName, int expectedStatusCode, String expectedBody) {
+    private void postStepStartedAndConfirmTestResponse(String radCode, String secret, String buildId, String stepName, int expectedStatusCode, String expectedBody) {
         given()
                 .params("build", buildId, "step", stepName, "secret", secret)
-                .when()
+            .when()
                 .post("/r/" + radCode + "/startStep")
-                .then()
+            .then()
                 .statusCode(expectedStatusCode)
                 .body(equalTo(expectedBody));
     }
