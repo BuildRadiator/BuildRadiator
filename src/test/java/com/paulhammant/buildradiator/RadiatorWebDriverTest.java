@@ -96,21 +96,6 @@ public class RadiatorWebDriverTest {
                 "TCP/IP address (127.0.0.1) is not allowed.");
     }
 
-    private void startAppAndOpenWebDriverOnRadiatorPage(String code) {
-        startAppAndOpenWebDriverOnRadiatorPage(code, "");
-    }
-
-    private void startAppAndOpenWebDriverOnRadiatorPage(String code, String extraUrl) {
-        app.start("server.join=false");
-        while (!app.appStarted) {
-            try {
-                Thread.sleep(15);
-            } catch (InterruptedException e) {
-            }
-        }
-        DRIVER.get(domain + "/r#" + code + "/Main_Project_Trunk_Build" + extraUrl);
-    }
-
     @Test
     public void confirmDataRefreshes() throws InterruptedException {
 
@@ -132,5 +117,21 @@ public class RadiatorWebDriverTest {
         FWD.trs().get(1).getText().within(secs(4)).shouldContain("(passed)");
 
     }
+
+    private void startAppAndOpenWebDriverOnRadiatorPage(String code) {
+        startAppAndOpenWebDriverOnRadiatorPage(code, "");
+    }
+
+    private void startAppAndOpenWebDriverOnRadiatorPage(String code, String extraUrl) {
+        app.start("server.join=false");
+        while (!app.appStarted) {
+            try {
+                Thread.sleep(15);
+            } catch (InterruptedException e) {
+            }
+        }
+        DRIVER.get(domain + "/r#" + code + "/Main_Project_Trunk_Build" + extraUrl);
+    }
+
 
 }

@@ -1,23 +1,19 @@
 package com.paulhammant.buildradiator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paulhammant.buildradiator.model.Build;
 import com.paulhammant.buildradiator.model.CreatedRadiator;
 import com.paulhammant.buildradiator.model.Radiator;
 import com.paulhammant.buildradiator.model.Step;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static com.paulhammant.buildradiator.BuildRadiatorApp.DEMO_RADIATOR_CODE;
 import static com.paulhammant.buildradiator.BuildRadiatorApp.NO_UPDATES;
-import static com.paulhammant.buildradiator.hamcrest.IgnoringLastUpdatedIsTheSameRadiatorAs.ignoringLastUpdatedIsTheSameRadiatorAs;
+import static com.paulhammant.buildradiator.hamcrest.HasNewRadiator.captureCreatedRadiator;
+import static com.paulhammant.buildradiator.hamcrest.IgnoringLastUpdatedFieldTheRadiatorIsTheSameAs.ignoringLastUpdatedFieldTheRadiatorIsTheSameAs;
 import static com.paulhammant.buildradiator.model.TestRadBuilder.*;
 import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
@@ -50,7 +46,7 @@ public class RadiatorIntegrationTest {
         get("/r/RAD_CODE" )
                 .then()
                 .assertThat()
-                .body(ignoringLastUpdatedIsTheSameRadiatorAs(rad.withoutSecret()))
+                .body(ignoringLastUpdatedFieldTheRadiatorIsTheSameAs(rad.withoutSecret()))
                 .statusCode(200)
                 .contentType("application/json;charset=UTF-8");
     }
@@ -61,13 +57,20 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
+        CreatedRadiator createdRadiator = new CreatedRadiator();
         given()
                 .params("stepNames", join(",", "P_P", "Q q", "R-R"))
             .when()
                 .post("/r/create")
             .then()
                 .statusCode(200)
-                .body(hasNewRadiator("P P", "Q q", "R-R"));
+                .body(captureCreatedRadiator(createdRadiator));
+
+        Radiator rad = app.getResultsStore().actualRadiators.values().iterator().next();
+        assertThat(rad.code, equalTo(createdRadiator.code));
+        assertThat(rad.secret, equalTo(createdRadiator.secret));
+        assertThat(rad.stepNames, equalTo(stepNames("P P", "Q q", "R-R")));
+
     }
 
     @Test
@@ -77,7 +80,7 @@ public class RadiatorIntegrationTest {
         startApp();
 
         given()
-                .params("stepNames", join(",", "short1,short 2,1234567890123456789012"))
+                .params("stepNames", join(",", "short1", "short 2", "1234567890123456789012"))
             .when()
                 .post("/r/create")
             .then()
@@ -91,19 +94,18 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
-
-
+        CreatedRadiator createdRadiator = new CreatedRadiator();
         given()
                 .params("stepNames", join(",", "short1", "short 2", "short 333"))
             .when()
                 .post("/r/create")
             .then()
                 .statusCode(200)
-                .body(startsWith("{\"code"));
+                .body(captureCreatedRadiator(createdRadiator));
 
         Radiator rad = app.getResultsStore().actualRadiators.values().iterator().next();
-        assertThat(rad.code.length(), greaterThan(10));
-        assertThat(rad.secret.length(), greaterThan(8));
+        assertThat(rad.code, equalTo(createdRadiator.code));
+        assertThat(rad.secret, equalTo(createdRadiator.secret));
         assertThat(rad.stepNames, equalTo(stepNames("short1", "short 2", "short 333")));
     }
 
@@ -129,30 +131,6 @@ public class RadiatorIntegrationTest {
         startApp();
 
         postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "ip address 127.0.0.1 not authorized");
-    }
-
-    private BaseMatcher<String> hasNewRadiator(String... expectedSteps) {
-        return new BaseMatcher<String>() {
-            private String radCode = "unknown";
-
-            @Override
-            public boolean matches(Object o) {
-                try {
-                    CreatedRadiator cr = new ObjectMapper().readValue((String) o, CreatedRadiator.class);
-                    radCode = cr.code;
-                    Radiator rad = app.radiatorStore.get(cr.code, "127.0.0.1");
-                    return rad.code.length() > 9 && rad.secret.length() > 6 && Arrays.deepEquals(rad.stepNames, expectedSteps);
-                } catch (IOException e) {
-                    fail("IOE encountered " + e.getMessage());
-                }
-                return false;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("a radiator " + radCode + " with steps " + join(",", expectedSteps) + ")");
-            }
-        };
     }
 
     @Test
@@ -204,16 +182,17 @@ public class RadiatorIntegrationTest {
             }
         };
         startApp();
+
         assertNotNull(app.radiatorStore.get(DEMO_RADIATOR_CODE, "127.0.0.1"));
 
-        for (String barred : stepNames("startStep", "stepPassed", "stepFailed", "buildCancelled")) {
+        for (String barredOperation : stepNames("startStep", "stepPassed", "stepFailed", "buildCancelled")) {
             given()
                     .params("build", "1", "step", "Compile", "secret", NO_UPDATES)
                 .when()
-                    .post("/r/" + DEMO_RADIATOR_CODE + "/" + barred)
+                    .post("/r/" + DEMO_RADIATOR_CODE + "/" + barredOperation)
                 .then()
                     .statusCode(200)
-                    .body(equalTo("secret doesnt match"));
+                    .body(equalTo("secret doesnt match")); // in lieu of specific method
         }
 
     }
@@ -316,16 +295,6 @@ public class RadiatorIntegrationTest {
 
     }
 
-    private void postStepStartedAndConfirm(String radCode, String secret, String buildId, String stepName, int expectedStatusCode, String expectedBody) {
-        given()
-                .params("build", buildId, "step", stepName, "secret", secret)
-            .when()
-                .post("/r/" + radCode + "/startStep")
-            .then()
-                .statusCode(expectedStatusCode)
-                .body(equalTo(expectedBody));
-    }
-
     @Test
     public void radiatorCannotBeUpdatedWithWithBuildStartForBogusStep() {
 
@@ -415,5 +384,16 @@ public class RadiatorIntegrationTest {
         app.stop();
         app = null;
     }
+
+    private void postStepStartedAndConfirm(String radCode, String secret, String buildId, String stepName, int expectedStatusCode, String expectedBody) {
+        given()
+                .params("build", buildId, "step", stepName, "secret", secret)
+                .when()
+                .post("/r/" + radCode + "/startStep")
+                .then()
+                .statusCode(expectedStatusCode)
+                .body(equalTo(expectedBody));
+    }
+
 
 }

@@ -31,14 +31,14 @@ public class RadiatorUnitTest {
         r.startStep("123", "unit tests");
         r.stepFailed("123", "unit tests");
 
-        assertRadiatorsEqual(r, rad("abc123", "123", stepNames("compile", "unit tests", "func tests"),
+        assertRadiatorsEqualIgnoringLastUpdatedField(r, rad("abc123", "123", stepNames("compile", "unit tests", "func tests"),
                 build("123", "failed", 0, step("compile", 50, "passed"),
                 step("unit tests", 0, "failed"), step("func tests", 0, "skipped"))));
 
 
     }
 
-    public static void assertRadiatorsEqual(Radiator actual, Radiator expected) {
+    public static void assertRadiatorsEqualIgnoringLastUpdatedField(Radiator actual, Radiator expected) {
 
         assertThat("Diff radiator code", actual.code, is(expected.code));
         assertThat("Diff radiator secret", actual.secret, is(expected.secret));
@@ -84,7 +84,7 @@ public class RadiatorUnitTest {
         } catch (UnknownStep e) {
         }
 
-        assertRadiatorsEqual(rad, rad("X", "sseeccrreett", stepNames("A"),
+        assertRadiatorsEqualIgnoringLastUpdatedField(rad, rad("X", "sseeccrreett", stepNames("A"),
                 build("1", "", 0, step("A", 0, ""))));
 
     }
