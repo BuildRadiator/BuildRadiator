@@ -52,32 +52,26 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void knownCodeHasListOfBuildsAvailableAsJson() throws InterruptedException {
-        app = new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore require) {
-                Radiator rad = radiatorStore.createRadiator(codeGenerator, "A", "B", "C");
-                radCode = rad.code;
-                radSecret = rad.secret;
-                radiatorStore.get(app.radCode, "1.1.1.1").startStep("1", "A");
-            }
-        };
+
+        Radiator rad = rad("RAD_CODE", "a_secret", stepNames("A", "B", "C"),
+                build("1", "running", 0, step("A", 0, "running"), step("B"), step("C")))
+                .withIpAccessRestrictedToThese("127.0.0.1");
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        Radiator expected = rad("RAD_CODE", null,
-                stepNames("A", "B", "C"), build("1", "running", 0, step("A", 0, "running"),
-                        step("B", 0, ""), step("C", 0, "")));
-
-        get("/r/" + app.radCode)
+        get("/r/RAD_CODE" )
                 .then()
                 .assertThat()
-                .body(ignoringLastUpdatedIsTheSameRadiatorAs(expected))
+                .body(ignoringLastUpdatedIsTheSameRadiatorAs(rad.withoutSecret()))
                 .statusCode(200)
                 .contentType("application/json;charset=UTF-8");
     }
 
     @Test
     public void radiatorCanBeCreatedAndTransformUnderscoresInStepNames() {
-        app = new TestVersionOfBuildRadiatorApp.ThatHasNoRadiators();
+
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
         given()
@@ -91,7 +85,8 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCannotBeCreatedWithStepNamesThatAreTooLong() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
         given()
@@ -105,7 +100,8 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeCreatedWithStepNamesThatAreNotTooLong() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
         given()
@@ -119,32 +115,26 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeCreatedWithRestrictedIpAddressesAndStillAllowAccess() {
-        app = new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore require) {
-            }
-        };
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"))
+                .withIpAccessRestrictedToThese("127.0.0.1");
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
-        app.radiatorStore.createRadiator(new TestRandomGenerator("aaa", "sseeccrreett"), "A")
-                .withIpAccessRestrictedToThese("111.111.111.111", "127.0.0.1")
-                .builds.add(new Build("1", stepNames("A")));
-        app.radCode = "aaa";
-        postStepStartedAndConfirm(200, "OK", "sseeccrreett");
+
+        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "OK");
     }
 
     @Test
     public void radiatorCanBeCreatedWithRestrictedIpAddressesAndBlockAccess() {
-        app = new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore require) {
-            }
-        };
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"))
+                .withIpAccessRestrictedToThese("111.111.111.111", "222.222.222.222");
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
-        app.radiatorStore.createRadiator(new TestRandomGenerator("aaa", "sseeccrreett"), "A")
-                .withIpAccessRestrictedToThese("111.111.111.111", "222.222.222.222")
-                .builds.add(new Build("1", stepNames("A")));
-        app.radCode = "aaa";
-        postStepStartedAndConfirm(200, "ip address 127.0.0.1 not authorized", "sseeccrreett");
+
+        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "ip address 127.0.0.1 not authorized");
     }
 
     private BaseMatcher<String> hasNewRadiator(String... expectedSteps) {
@@ -157,8 +147,6 @@ public class RadiatorIntegrationTest {
                     CreatedRadiator cr = new ObjectMapper().readValue((String) o, CreatedRadiator.class);
                     radCode = cr.code;
                     Radiator rad = app.radiatorStore.get(cr.code, "127.0.0.1");
-                    app.radCode = radCode;
-                    app.radSecret = rad.secret;
                     return rad.code.length() > 9 && rad.secret.length() > 6 && Arrays.deepEquals(rad.stepNames, expectedSteps);
                 } catch (IOException e) {
                     fail("IOE encountered " + e.getMessage());
@@ -168,77 +156,89 @@ public class RadiatorIntegrationTest {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("a radiator " + radCode + ", secret: " + app.radSecret + " with steps " + join(",", expectedSteps) + ")");
+                description.appendText("a radiator " + radCode + " with steps " + join(",", expectedSteps) + ")");
             }
         };
     }
 
     @Test
     public void radiatorCanBeUpdatedWithWithBuildStart() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "OK", app.radSecret);
+        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "A", 200, "OK");
 
-        assertThat(app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps.get(0).toString(),
-                startsWith("Step{name='A', dur=0, status='running', started="));
+        assertThat(rad.builds.get(0).steps.get(0).status, equalTo("running"));
     }
 
     @Test
     public void radiatorCannotBeUpdatedWithWithBuildStartIfTheSecretIsWrong() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "secret doesnt match",  "wrong-secret");
+        postStepStartedAndConfirm("aaa", "wrong-secret", "1", "A", 200, "secret doesnt match");
 
-        assertThat(app.radiatorStore.get(app.radCode, "127.0.0.1").builds.size(), equalTo(0));
+        assertThat(rad.builds.size(), equalTo(0));
     }
 
     @Test
     public void radiatorCannotBeUpdatedWithWithBuildStartIfTheSecretIsTooLong() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "secret parameter too long",  "secret--way--too--long");
+        postStepStartedAndConfirm("aaa", "secret--way--too--long", "1", "A", 200, "secret parameter too long");
 
-        assertThat(app.radiatorStore.get(app.radCode, "127.0.0.1").builds.size(), equalTo(0));
+        assertThat(rad.builds.size(), equalTo(0));
     }
 
     @Test
     public void demoRadiatorCannotBeUpdated() {
-        app = new TestVersionOfBuildRadiatorApp.ThatHasNoRadiators();
+
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
         assertNotNull(app.radiatorStore.get(DEMO_RADIATOR_CODE, "127.0.0.1"));
 
         for (String barred : stepNames("startStep", "stepPassed", "stepFailed", "buildCancelled")) {
             given()
                     .params("build", "1", "step", "Compile", "secret", NO_UPDATES)
-                    .when()
+                .when()
                     .post("/r/" + DEMO_RADIATOR_CODE + "/" + barred)
-                    .then()
+                .then()
                     .statusCode(200)
                     .body(equalTo("secret doesnt match"));
         }
 
     }
 
-
     @Test
     public void radiatorCanBeUpdatedWithWithCancelledBuild() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A", "B");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A", "B"),
+                build("1", "running", 0, step("A", 0, "running"), step("B")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "OK", app.radSecret);
-
         given()
-                .params("build", "1", "step", "A", "secret", app.radSecret)
-                .when()
-                .post("/r/" + app.radCode + "/buildCancelled")
-                .then()
+                .params("build", "1", "step", "A", "secret", "sseeccrreett")
+            .when()
+                .post("/r/aaa/buildCancelled")
+            .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
 
-        ArrayList<Step> steps = app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps;
+        Build build = rad.builds.get(0);
+        assertThat(build.status, equalTo("cancelled"));
+        ArrayList<Step> steps = build.steps;
         assertThat(steps.get(0).name, equalTo("A"));
         assertThat(steps.get(0).status, equalTo("cancelled"));
         assertThat(steps.get(1).name, equalTo("B"));
@@ -247,20 +247,22 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeUpdatedWithWithBuildStepCompletion() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A", "B"),
+                build("1", "running", 0, step("A", 0, "running"), step("B")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "OK", app.radSecret);
-
         given()
-                .params("build", "1", "step", "A", "secret", app.radSecret)
-                .when()
-                .post("/r/" + app.radCode + "/stepPassed")
-                .then()
+                .params("build", "1", "step", "A", "secret", "sseeccrreett")
+            .when()
+                .post("/r/aaa/stepPassed")
+            .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
 
-        ArrayList<Step> steps = app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps;
+        ArrayList<Step> steps = rad.builds.get(0).steps;
         assertThat(steps.get(0).name, equalTo("A"));
         assertThat(steps.get(0).status, equalTo("passed"));
 
@@ -268,20 +270,22 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeUpdatedWithWithBuildStepCompletionAndStartOfNewStepInOneGo() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A", "B");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A", "B"),
+                build("1", "running", 0, step("A", 0, "running"), step("B")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "OK", app.radSecret);
-
         given()
-                .params("build", "1", "pStep", "A", "step", "B", "secret", app.radSecret)
-                .when()
-                .post("/r/" + app.radCode + "/stepPassedAndStartStep")
-                .then()
+                .params("build", "1", "pStep", "A", "step", "B", "secret", "sseeccrreett")
+            .when()
+                .post("/r/aaa/stepPassedAndStartStep")
+            .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
 
-        ArrayList<Step> steps = app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps;
+        ArrayList<Step> steps = rad.builds.get(0).steps;
         assertThat(steps.get(0).name, equalTo("A"));
         assertThat(steps.get(0).status, equalTo("passed"));
         assertThat(steps.get(1).name, equalTo("B"));
@@ -291,91 +295,74 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeUpdatedWithWithBuildStepFailure() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A", "B"),
+                build("1", "running", 0, step("A", 0, "running"), step("B")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        postStepStartedAndConfirm(200, "OK", app.radSecret);
-
         given()
-                .params("build", "1", "step", "A", "secret", app.radSecret)
-                .when()
-                .post("/r/" + app.radCode + "/stepFailed")
-                .then()
+                .params("build", "1", "step", "A", "secret", "sseeccrreett")
+            .when()
+                .post("/r/aaa/stepFailed")
+            .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
 
-        String actual = app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps.get(0).toString();
-        assertThat(actual, startsWith("Step{name='A', dur="));
-        assertThat(actual, containsString(", status='failed', started=1"));
+        Build build = rad.builds.get(0);
+        assertThat(build.status, equalTo("failed"));
+        assertThat(build.steps.get(0).status, equalTo("failed"));
+        assertThat(build.steps.get(1).status, equalTo("skipped"));
 
     }
 
-    private void postStepStartedAndConfirm(int expectedStatusCode, String expectedBody, String secret) {
+    private void postStepStartedAndConfirm(String radCode, String secret, String buildId, String stepName, int expectedStatusCode, String expectedBody) {
         given()
-                .params("build", "1", "step", "A", "secret", secret)
-                .when()
-                .post("/r/" + app.radCode + "/startStep")
-                .then()
+                .params("build", buildId, "step", stepName, "secret", secret)
+            .when()
+                .post("/r/" + radCode + "/startStep")
+            .then()
                 .statusCode(expectedStatusCode)
                 .body(equalTo(expectedBody));
     }
 
     @Test
     public void radiatorCannotBeUpdatedWithWithBuildStartForBogusStep() {
-        app = createBuildRadiatorServerWithOneRadiatorAndNoBuilds("A", "B", "C");
-        startApp();
-        given()
-                .params("build", "1", "step", "DoesntExist", "secret", app.radSecret)
-                .when()
-                .post("/r/" + app.radCode + "/startStep")
-                .then()
-                .statusCode(200)
-                .body(equalTo("unknown step"));
 
-        assertThat(app.radiatorStore.get(app.radCode, "127.0.0.1").builds.get(0).steps.get(0).toString(),
-                startsWith("Step{name='A', dur=0, status='', started=0"));
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
+        startApp();
+
+        postStepStartedAndConfirm("aaa", "sseeccrreett", "1", "DoesntExist", 200, "unknown step");
+
+        Step step = rad.builds.get(0).steps.get(0);
+        assertThat(step.status, equalTo(""));
 
     }
 
     @Test
     public void buildCannotBeStartedTwice() {
-        app = new TestVersionOfBuildRadiatorApp.ThatHasOneRadiatorAndOneBuildStarted("222", "A", "B");
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"),
+                build("222", "running", 0, step("A", 0, "running")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
-        given()
-                .params("build", "222", "step", "A", "secret", app.radSecret)
-                .when()
-                .post("/r/" + app.radCode + "/startStep")
-                .then()
-                .statusCode(200)
-                .body(equalTo("wrong build state"));
 
-    }
+        postStepStartedAndConfirm("aaa", "sseeccrreett", "222", "A", 200, "wrong build state");
 
-    private TestVersionOfBuildRadiatorApp createBuildRadiatorServerWithOneRadiatorAndNoBuilds(final String... stepNames) {
-        return new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore require) {
-                Radiator rad = radiatorStore.createRadiator(codeGenerator, stepNames);
-                radCode = rad.code;
-                radSecret = rad.secret;
-            }
-        };
     }
 
     @Test
     public void unknownCodeHasNoBuildsList() {
-        app = new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore require) {
-                Radiator rad = radiatorStore.createRadiator(codeGenerator, "A", "B", "C");
-                radCode = rad.code;
-                radSecret = rad.secret;
-                radiatorStore.get(radCode, "127.0.0.1").startStep("1", "A");
-            }
-        };
+
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
+
         get("/r/wewwewwewe/")
-                .then()
+            .then()
                 .assertThat()
                 .body(equalTo(("{\"message\":\"nothing here\",\"egressIpAddress\":\"127.0.0.1\"}")))
                 .statusCode(200)
@@ -384,14 +371,12 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void listOfCodesNotAllowed() {
-        app = new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore store) {
-            }
-        };
+
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
+
         get("/r/")
-                .then()
+            .then()
                 .assertThat()
                 .body(containsString("<title>Build Radiator</title>"))
                 .statusCode(200)
@@ -401,27 +386,15 @@ public class RadiatorIntegrationTest {
     @Test
     public void radiatorStoreCannotBeGotIfCodeIsTooLong() {
 
-        final String longCode = "12345678901234567890123";
-
-        app = new TestVersionOfBuildRadiatorApp(null) {
-            @Override
-            protected void loadStoreWithTestData(RadiatorStore store) {
-                Radiator r = rad(longCode, null,
-                        stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
-                store.actualRadiators.put(longCode, r);
-                app.radCode = longCode;
-            }
-        };
+        app = new TestVersionOfBuildRadiatorApp(null);
         startApp();
 
-        get("/r/" + longCode)
-                .then()
+        get("/r/12345678901234567890123")
+            .then()
                 .assertThat()
                 .body(equalTo("\"radiatorCode parameter too long\""))
                 .statusCode(200)
                 .contentType("application/json;charset=UTF-8");
-
-        assertThat(app.radCode, equalTo(longCode));
     }
 
 
