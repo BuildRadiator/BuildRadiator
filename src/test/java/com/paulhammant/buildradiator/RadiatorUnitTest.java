@@ -32,7 +32,7 @@ public class RadiatorUnitTest {
         r.stepFailed("123", "unit tests");
 
         assertRadiatorsEqual(r, rad("abc123", "123", stepNames("compile", "unit tests", "func tests"),
-                build("123", "failed", step("compile", 50, "passed"),
+                build("123", "failed", 0, step("compile", 50, "passed"),
                 step("unit tests", 0, "failed"), step("func tests", 0, "skipped"))));
 
 
@@ -85,7 +85,7 @@ public class RadiatorUnitTest {
         }
 
         assertRadiatorsEqual(rad, rad("X", "sseeccrreett", stepNames("A"),
-                build("1", "", step("A", 0, ""))));
+                build("1", "", 0, step("A", 0, ""))));
 
     }
 

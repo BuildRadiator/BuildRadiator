@@ -17,7 +17,7 @@ public class RadiatorUnitTest {
 
     @Test
     public void stepPassedForUnknownBuildShouldHaveBarfed() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")));
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         try {
             r.stepPassed("2","A");
             fail("should have barfed");
@@ -28,7 +28,7 @@ public class RadiatorUnitTest {
 
     @Test
     public void stepFailedForUnknownBuildShouldHaveBarfed() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")));
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         try {
             r.stepFailed("2","A");
             fail("should have barfed");
@@ -39,7 +39,7 @@ public class RadiatorUnitTest {
 
     @Test
     public void buildCancellationForUnknownBuildShouldHaveBarfed() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")));
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         try {
             r.cancel("2");
             fail("should have barfed");
@@ -50,21 +50,21 @@ public class RadiatorUnitTest {
 
     @Test
     public void buildCancellationForKnownBuildWorks() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")));
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         r.cancel("1");
         assertThat(r.builds.get(0).status, equalTo("cancelled"));
     }
 
     @Test
     public void radiatorThatIsSentToBrowserShouldNotContainSecret() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")));
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         assertNotNull(r.secret);
         assertNull(r.withoutSecret().secret);
     }
 
     @Test
     public void radiatorsSecretIsUsedInVerification() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")));
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         assertThat(r.verifySecret("sseeccrreett"), sameInstance(r));
         try {
             r.verifySecret("sdfsdf");
@@ -75,7 +75,7 @@ public class RadiatorUnitTest {
 
     @Test
     public void radiatorsCanBeLockedToIPAddresses() {
-        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", step("A", 0, "running")))
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")))
                 .withIpAccessRestrictedToThese("11.22.33.44");
         r.verifyIP("11.22.33.44");
         try {

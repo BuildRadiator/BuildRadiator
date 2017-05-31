@@ -52,7 +52,7 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void knownCodeHasListOfBuildsAvailableAsJson() throws InterruptedException {
-        app = new TestVersionOfBuildRadiatorApp() {
+        app = new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore require) {
                 Radiator rad = radiatorStore.createRadiator(codeGenerator, "A", "B", "C");
@@ -64,7 +64,7 @@ public class RadiatorIntegrationTest {
         startApp();
 
         Radiator expected = rad("RAD_CODE", null,
-                stepNames("A", "B", "C"), build("1", "running", step("A", 0, "running"),
+                stepNames("A", "B", "C"), build("1", "running", 0, step("A", 0, "running"),
                         step("B", 0, ""), step("C", 0, "")));
 
         get("/r/" + app.radCode)
@@ -119,7 +119,7 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeCreatedWithRestrictedIpAddressesAndStillAllowAccess() {
-        app = new TestVersionOfBuildRadiatorApp() {
+        app = new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore require) {
             }
@@ -134,7 +134,7 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void radiatorCanBeCreatedWithRestrictedIpAddressesAndBlockAccess() {
-        app = new TestVersionOfBuildRadiatorApp() {
+        app = new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore require) {
             }
@@ -352,7 +352,7 @@ public class RadiatorIntegrationTest {
     }
 
     private TestVersionOfBuildRadiatorApp createBuildRadiatorServerWithOneRadiatorAndNoBuilds(final String... stepNames) {
-        return new TestVersionOfBuildRadiatorApp() {
+        return new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore require) {
                 Radiator rad = radiatorStore.createRadiator(codeGenerator, stepNames);
@@ -364,7 +364,7 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void unknownCodeHasNoBuildsList() {
-        app = new TestVersionOfBuildRadiatorApp() {
+        app = new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore require) {
                 Radiator rad = radiatorStore.createRadiator(codeGenerator, "A", "B", "C");
@@ -384,7 +384,7 @@ public class RadiatorIntegrationTest {
 
     @Test
     public void listOfCodesNotAllowed() {
-        app = new TestVersionOfBuildRadiatorApp() {
+        app = new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore store) {
             }
@@ -403,11 +403,11 @@ public class RadiatorIntegrationTest {
 
         final String longCode = "12345678901234567890123";
 
-        app = new TestVersionOfBuildRadiatorApp() {
+        app = new TestVersionOfBuildRadiatorApp(null) {
             @Override
             protected void loadStoreWithTestData(RadiatorStore store) {
                 Radiator r = rad(longCode, null,
-                        stepNames("A"), build("1", "running", step("A", 0, "running")));
+                        stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
                 store.actualRadiators.put(longCode, r);
                 app.radCode = longCode;
             }

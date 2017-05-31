@@ -12,7 +12,7 @@ public class BuildUnitTest {
 
     @Test
     public void cancellationShouldNotAffectStepThatHasPassed() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 0, "running"));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 0, "running"));
         b.cancel();
         assertThat(b.status, equalTo("cancelled"));
         assertThat(b.steps.get(0).status, equalTo("passed"));
@@ -21,48 +21,48 @@ public class BuildUnitTest {
 
     @Test(expected = WrongBuildState.class)
     public void cancellationCannotHappenTwice() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 0, "running"));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 0, "running"));
         b.cancel();
         b.cancel();
     }
 
     @Test(expected = WrongBuildState.class)
     public void cancellationCannotHappenOnPassedBuild() {
-        Build b = build("1", "passed", step("A", 100, "passed"), step("B", 200, "passed"));
+        Build b = build("1", "passed", 0, step("A", 100, "passed"), step("B", 200, "passed"));
         b.cancel();
     }
 
     @Test(expected = WrongBuildState.class)
     public void cancellationCannotHappenOnFailedBuild() {
-        Build b = build("1", "failed", step("A", 100, "passed"), step("B", 200, "failed"));
+        Build b = build("1", "failed", 0, step("A", 100, "passed"), step("B", 200, "failed"));
         b.cancel();
     }
 
     @Test()
     public void startShouldNotHappenToRunningFailedOrPassedStep() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 0, "running"));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 0, "running"));
         startThrowsWrongBuildState(b, "A");
         startThrowsWrongBuildState(b, "B");
-        b = build("1", "failed", step("A", 100, "failed"), step("B", 0, ""));
+        b = build("1", "failed", 0, step("A", 100, "failed"), step("B", 0, ""));
         startThrowsWrongBuildState(b, "A");
-        b = build("1", "passed", step("A", 100, "passed"), step("B", 0, "passed"));
+        b = build("1", "passed", 0, step("A", 100, "passed"), step("B", 0, "passed"));
         startThrowsWrongBuildState(b, "A");
     }
 
     @Test()
     public void passShouldNotHappenToFailedOrPassedStep() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 0, "running"));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 0, "running"));
         passThrowsWrongBuildState(b, "A");
-        b = build("1", "failed", step("A", 100, "failed"), step("B", 0, ""));
+        b = build("1", "failed", 0, step("A", 100, "failed"), step("B", 0, ""));
         passThrowsWrongBuildState(b, "A");
         passThrowsWrongBuildState(b, "B");
     }
 
     @Test()
     public void failShouldNotHappenToFailedOrPassedStep() {
-        Build b = build("1", "running", step("A", 100, "passed"));
+        Build b = build("1", "running", 0, step("A", 100, "passed"));
         failThrowsWrongBuildState(b, "A");
-        b = build("1", "failed", step("A", 100, "failed"));
+        b = build("1", "failed", 0, step("A", 100, "failed"));
         failThrowsWrongBuildState(b, "A");
         failThrowsWrongBuildState(b, "B");
     }
@@ -70,27 +70,27 @@ public class BuildUnitTest {
 
     @Test(expected = UnknownStep.class)
     public void unknownStepCannotBeStarted() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 200, ""));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, ""));
         b.start("C");
     }
 
     @Test(expected = UnknownStep.class)
     public void unknownStepCannotPass() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 200, ""));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, ""));
         b.pass("C");
     }
 
     @Test(expected = UnknownStep.class)
     public void unknownStepCannotFail() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 200, ""));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, ""));
         b.fail("C");
     }
 
     @Test(expected = WrongBuildState.class)
     public void onlyRunningBuildCanFail() {
-        Build b = build("1", "running", step("A", 100, "passed"), step("B", 200, "running"));
+        Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, "running"));
         b.fail("B");
-        b = build("1", "", step("A", 100, "passed"), step("B", 200, "running"));
+        b = build("1", "", 0, step("A", 100, "passed"), step("B", 200, "running"));
         b.fail("B");
     }
 

@@ -5,20 +5,25 @@ import com.paulhammant.buildradiator.model.Radiator;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public abstract class TestVersionOfBuildRadiatorApp extends BuildRadiatorApp {
+public class TestVersionOfBuildRadiatorApp extends BuildRadiatorApp {
 
     protected boolean appStarted;
     protected String radCode;
     protected String radSecret;
 
-    public TestVersionOfBuildRadiatorApp() {
+    public TestVersionOfBuildRadiatorApp(Radiator testRadiator) {
         onStarted(() -> {
+            if (testRadiator != null) {
+                radiatorStore.actualRadiators.put(testRadiator.code, testRadiator);
+            }
             loadStoreWithTestData(radiatorStore);
             appStarted = true;
         });
     }
 
-    protected abstract void loadStoreWithTestData(RadiatorStore require);
+    protected void loadStoreWithTestData(RadiatorStore require) {
+
+    }
 
     protected void serveIndexPageButWithReplacement(String from, String to) {
         use("").get("/r/", (request, response) -> {
@@ -29,13 +34,17 @@ public abstract class TestVersionOfBuildRadiatorApp extends BuildRadiatorApp {
     }
 
     public static class ThatHasNoRadiators extends TestVersionOfBuildRadiatorApp {
-        @Override
-        protected final void loadStoreWithTestData(RadiatorStore require) {
+        public ThatHasNoRadiators() {
+            super(null);
         }
     }
 
     public static class ThatHasSimpleABCRadiatorCalledXXXWithOneFailedAndOneRunningBuild
             extends TestVersionOfBuildRadiatorApp {
+        public ThatHasSimpleABCRadiatorCalledXXXWithOneFailedAndOneRunningBuild() {
+            super(null);
+        }
+
         @Override
         protected void loadStoreWithTestData(RadiatorStore require) {
             Radiator rad = radiatorStore.createRadiator(new TestRandomGenerator("xxx", "sseeccrreett"), "A", "B", "C");
@@ -54,6 +63,7 @@ public abstract class TestVersionOfBuildRadiatorApp extends BuildRadiatorApp {
         private String buildNum;
 
         public ThatHasOneRadiatorAndOneBuildStarted(String buildNum, String... stepNames) {
+            super(null);
             this.buildNum = buildNum;
             this.stepNames = stepNames;
         }
