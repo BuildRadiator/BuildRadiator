@@ -15,17 +15,20 @@
         var hashParts = lhash.substr(1).split("/");
 
         if (lhash === "") {
-            window.location = "https://github.com/BuildRadiator/BuildRadiator/wiki/Getting-Started";
+            window.location = "https://github.com/BuildRadiator/BuildRadiator/wiki/Home";
 		} else {
             if (hashParts.length < 2) {
-                window.location = "https://github.com/BuildRadiator/BuildRadiator/wiki/Setting-The-Title-For-Your-Radiator";
+                window.location = "https://github.com/BuildRadiator/BuildRadiator/wiki/Setting-the-title-and-expanding-step-codes-in-the-UI";
 			}
         }
 
         function mapReplacements(hashParts) {
+
             var replacements = {};
             for (var i = 0; i < hashParts.length; i = i +2) {
-                replacements[hashParts[i]] = hashParts[i+1].replace(new RegExp("_", 'g'), " ");
+                if (hashParts[i] !== undefined && hashParts[i+1] !== undefined) {
+                    replacements[hashParts[i]] = hashParts[i+1].replace(new RegExp("_", 'g'), " ");
+				}
             }
             return replacements;
         }
