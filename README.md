@@ -47,6 +47,8 @@ knock yourself out with secret project names, etc.
 
 # Building the application yourself
 
+![](https://circleci.com/gh/BuildRadiator/BuildRadiator.png?circle-token=64772cdbf7a8b6c2c6bbfb6a8f52802e0b662a24)
+
 ```
 mvn clean install
 ```
