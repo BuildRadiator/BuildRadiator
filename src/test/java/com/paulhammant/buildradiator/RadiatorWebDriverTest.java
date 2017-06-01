@@ -120,7 +120,7 @@ public class RadiatorWebDriverTest {
             @Override
             protected void serveRadiatorPage() {
                 // speed up refresh interval - hack radiator.html as it is send to the browser
-                super.serveIndexPageButWithReplacement("30000", "300");
+                super.serveIndexPageButWithReplacements("30000", "300");
             }
         };
 
