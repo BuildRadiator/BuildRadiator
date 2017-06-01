@@ -16,6 +16,22 @@
 
   <name>Build Radiator</name>
 
+  <description>Build Radiator Site</description>
+  <url>http://github.com/BuildRadiator/BuildRadiator</url>
+  <licenses>
+    <license>
+      <name>The MIT license</name>
+      <url>https://github.com/BuildRadiator/BuildRadiator/blob/master/LICENSE.txt</url>
+    </license>
+  </licenses>
+  <scm>
+    <connection>scm:git:git@github.com:BuildRadiator/BuildRadiator.git</connection>
+    <developerConnection>scm:git:git@github.com:BuildRadiator/BuildRadiator.git</developerConnection>
+    <url>git@github.com:BuildRadiator/BuildRadiator.git</url>
+    <tag>HEAD</tag>
+  </scm>
+
+
   <properties>
     <jooby.version>${project.parent.version}</jooby.version>
     <application.class>com.paulhammant.buildradiator.BuildRadiatorMain</application.class>
