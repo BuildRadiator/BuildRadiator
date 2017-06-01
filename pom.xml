@@ -114,14 +114,6 @@
 
   <build>
 
-    <extensions>
-      <extension>
-        <groupId>com.paulhammant</groupId>
-        <artifactId>buildradiatorextension</artifactId>
-        <version>1.1-SNAPSHOT</version>
-      </extension>
-    </extensions>
-
     <resources>
       <resource>
         <directory>src/main/resources</directory>
