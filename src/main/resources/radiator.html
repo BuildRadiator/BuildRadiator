@@ -39,7 +39,8 @@
                 rad: {
                     builds: [],
                     lastUpdated: "",
-					ips: []
+					ips: [],
+                    columnWidths: []
 				},
 				radiatorCodeCorrect: true,
                 egressIpAddress: "",
@@ -104,12 +105,37 @@
 
                             if ("undefined" === typeof response.message) {
                                 self.rad = response;
+                                self.rad.columnWidths = [];
+                                self.rad.nonZeroCount = [];
                                 self.rad.ips = self.rad.ips.join(", ");
+                                for (var x = 0; x < self.rad.builds[0].steps.length; x++) {
+                                    self.rad.columnWidths.push(0);
+                                    self.rad.nonZeroCount.push(0);
+                                }
                                 for (var p = 0; p < self.rad.builds.length; p++) {
                                     for (var q = 0; q < self.rad.builds[p].steps.length; q++) {
+                                        // Expand step codes into longer names (if needed)
                                         self.rad.builds[p].steps[q].name = self.sed(self.rad.builds[p].steps[q].name);
+                                        self.rad.columnWidths[q] += self.rad.builds[p].steps[q].dur;
+                                        if (self.rad.builds[p].steps[q].dur > 0) {
+                                            self.rad.nonZeroCount[q] += 1;
+                                        }
                                     }
                                 }
+                                // make averages
+								var total = 0;
+                                for (var y = 0; y < self.rad.columnWidths.length; y++) {
+                                    self.rad.columnWidths[y] =  self.rad.columnWidths[y] / self.rad.nonZeroCount[y];
+                                    total += self.rad.columnWidths[y];
+                                }
+                                self.rad.minWidth = Math.round(total / 12);
+                                total += self.rad.minWidth;
+
+                                for (y = 0; y < self.rad.columnWidths.length; y++) {
+                                    self.rad.columnWidths[y] =  Math.round(self.rad.columnWidths[y] / total * 100);
+                                }
+                                self.rad.minWidth = Math.round(self.rad.minWidth / total * 100);
+
 
 							} else {
                                 self.radiatorCodeCorrect = false;
@@ -137,11 +163,11 @@
 				</td>
 			</tr>
 			<tr style="width: 100%" v-for="build in rad.builds">
-				<td v-bind:style="'text-align: center; background-color:'+ color(build.status)">
+				<td v-bind:style="'text-align: center; background-color:' + color(build.status) + '; width: ' + rad.minWidth + '%'">
 					<span style="font-size: 200%">{{ build.ref }}</span><br/>
 					<span>{{ build.dur | duration }}</span><br/>
 				</td>
-				<td v-bind:style="'text-align: center; background-color:'+ color(step.status)" v-for="step in build.steps">
+				<td v-bind:style="'text-align: center; background-color:' + color(step.status) + '; width: ' + rad.columnWidths[ix] + '%'" v-for="(step, ix) in build.steps">
 					<span style="font-size: 200%">{{ step.name }}</span><br/>
 					<span>{{ step.dur | duration }}</span><br/>
 					<span>{{ status(step.status) }}</span>

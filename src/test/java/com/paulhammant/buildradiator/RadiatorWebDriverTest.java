@@ -4,9 +4,13 @@ import com.paulhammant.buildradiator.model.Radiator;
 import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
+import org.seleniumhq.selenium.fluent.FluentWebElement;
+import org.seleniumhq.selenium.fluent.FluentWebElementVistor;
+import org.seleniumhq.selenium.fluent.TestableString;
 
 import static com.paulhammant.buildradiator.model.TestRadBuilder.*;
 import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.seleniumhq.selenium.fluent.Period.secs;
@@ -120,7 +124,7 @@ public class RadiatorWebDriverTest {
             @Override
             protected void serveRadiatorPage() {
                 // speed up refresh interval - hack radiator.html as it is send to the browser
-                super.serveIndexPageButWithReplacements("30000", "300");
+                super.serveIndexPageButWithReplacements("30000", "300", "\n</div>", "\n<pre>{{ rad | json }}</pre>\n</div>");
             }
         };
 
@@ -130,6 +134,44 @@ public class RadiatorWebDriverTest {
         rad.stepPassed("1", "A");
         FWD.trs().get(1).getText().within(secs(4)).shouldContain("(passed)");
 
+    }
+
+    @Test
+    public void columnsShouldBeProportional()  {
+
+        Radiator rad = rad("xxx", "sseeccrreett", stepNames("A", "B"),
+                build("1", "passed", 30000, step("A", 8000, "passed"), step("B", 32000, "passed")),
+                build("2", "passed", 30000, step("A", 12000, "passed"), step("B", 28000, "passed")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
+
+        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build");
+
+        StringBuilder percentages = new StringBuilder();
+        FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));
+        assertThat(percentages.toString(), equalTo("8%;23%;69%;8%;23%;69%;"));
+
+    }
+
+    @Test
+    public void columnsShouldBeProportionalEvenWithDurationsOfZero()  {
+
+        Radiator rad = rad("xxx", "sseeccrreett", stepNames("A", "B"),
+                build("1", "passed", 30000, step("A", 8000, "passed"), step("B", 30000, "passed")),
+                build("2", "running", 30000, step("A", 12000, "running"), step("B", 0, "")));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
+
+        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build");
+
+        StringBuilder percentages = new StringBuilder();
+        FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));
+        assertThat(percentages.toString(), equalTo("8%;23%;69%;8%;23%;69%;"));
+
+    }
+
+    private void rhs(String[] split, StringBuilder percentages) {
+        percentages.append(split.length > 1 ? split[1].trim() : "");
     }
 
     private void startAppAndOpenWebDriverOnRadiatorPage(String code, String title) {
