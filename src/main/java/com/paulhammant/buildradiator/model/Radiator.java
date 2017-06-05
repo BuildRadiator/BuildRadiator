@@ -117,7 +117,7 @@ public class Radiator {
         return cr;
     }
 
-    public void updateIps(String[] ips) {
+    public void updateIps(String... ips) {
         withIpAccessRestrictedToThese(ips);
     }
 }

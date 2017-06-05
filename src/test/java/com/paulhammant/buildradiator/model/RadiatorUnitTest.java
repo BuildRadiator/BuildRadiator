@@ -85,5 +85,23 @@ public class RadiatorUnitTest {
         }
     }
 
+    @Test
+    public void radiatorsCanBeUpdatedWithNewIPAddresses() {
+        Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")))
+                .withIpAccessRestrictedToThese("11.22.33.44");
+
+        r.verifyIP("11.22.33.44");
+
+        r.updateIps("33.44.55.66");
+
+        assertThat(r.ips, equalTo(new String[] {"33.44.55.66"}));
+        try {
+            r.verifyIP("11.22.33.44");
+            fail();
+        } catch (IpNotAuthorized e) {
+        }
+
+    }
+
 
 }
