@@ -116,4 +116,8 @@ public class Radiator {
         cr.secret = secret;
         return cr;
     }
+
+    public void updateIps(String[] ips) {
+        withIpAccessRestrictedToThese(ips);
+    }
 }

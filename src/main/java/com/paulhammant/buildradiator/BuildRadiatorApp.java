@@ -44,6 +44,7 @@ public class BuildRadiatorApp extends Jooby {
                 .post("/:radiatorCode/stepFailed", this::stepFailed)
                 .post("/:radiatorCode/startStep", this::startStep)
                 .post("/:radiatorCode/buildCancelled", this::buildCancelled)
+                .post("/:radiatorCode/updateIps", this::updateIps)
                 .post("/create", this::createRadiator);
 
         get("/_ah/health", () -> {
@@ -188,6 +189,19 @@ public class BuildRadiatorApp extends Jooby {
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
         String secret = getRadiatorSecretButVerifyParamFirst(req);
         getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepFailed(build, step);
+        rsp.send("OK");
+    }
+
+    protected void updateIps (Request req, Response rsp) throws Throwable {
+        rsp.type("text/plain");
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
+        String secret = getRadiatorSecretButVerifyParamFirst(req);
+        String[] ips = req.param("ips").value("").split(",");
+        if (ips.length == 1 && ips[0].equals("")) {
+            ips = new String[0];
+        }
+        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).updateIps(ips);
+
         rsp.send("OK");
     }
 

@@ -134,6 +134,26 @@ public class RadiatorIntegrationTest {
     }
 
     @Test
+    public void radiatorCanBeUpdatedWithRestrictedIpAddresses() {
+
+        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"));
+
+        app = new TestVersionOfBuildRadiatorApp(rad);
+        startApp();
+
+        given()
+                .params( "ips", "111.111.111.111", "secret", "sseeccrreett")
+            .when()
+                .post("/r/aaa/updateIps")
+            .then()
+                .statusCode(200)
+                .body(equalTo("OK"));
+
+
+        postStepStartedAndConfirmTestResponse("aaa", "sseeccrreett", "1", "A", 200, "ip address 127.0.0.1 not authorized");
+    }
+
+    @Test
     public void radiatorCanBeUpdatedWithWithBuildStart() {
 
         Radiator rad = rad("aaa", "sseeccrreett", stepNames("A"));
