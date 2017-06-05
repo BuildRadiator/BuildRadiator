@@ -143,8 +143,9 @@ public class BuildRadiatorApp extends Jooby {
         String step = getStepButVerifyParamFirst(req);
         String pStep = getPreviousStepButVerifyParamFirst(req);
         String secret = getRadiatorSecretButVerifyParamFirst(req);
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, pStep);
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).startStep(build, step);
+        Radiator radiator = getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret);
+        radiator.stepPassed(build, pStep);
+        radiator.startStep(build, step);
         rsp.send("OK");
 
     }
