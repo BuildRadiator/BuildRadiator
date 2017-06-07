@@ -4,7 +4,7 @@
 
 # An online service for all
 
-[buildraditor.org](https://buildraditor.org)
+[buildradiator.org](https://buildradiator.org)
 
 The service above will hold radiator state for 10 builds, per radiator. You can go and make your own radiator on
 it, and then place a TV/monitor on a wall somewhere to show that page in a browser. You could choose a consumer device like a
