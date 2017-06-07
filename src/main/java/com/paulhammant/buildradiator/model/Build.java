@@ -15,13 +15,13 @@ public class Build {
 
     public Build(String ref, String[] stepsNames) {
         this.ref = ref;
+        started = System.currentTimeMillis();
         for (String step : stepsNames) {
             this.steps.add(new Step(step));
         }
     }
 
     public void start(String step) {
-        started = System.currentTimeMillis();
         if (!status.equals("") && !status.equals("running")) {
             throw new WrongBuildState();
         }
