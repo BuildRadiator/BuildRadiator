@@ -56,6 +56,15 @@ public class RadiatorUnitTest {
     }
 
     @Test
+    public void startOfBuildStepFinishesPreviousOne() {
+        Radiator r = rad("X", "sseeccrreett", stepNames("A", "B"),
+                build("1", "running", 0, step("A", 0, "running"), step("B", 0, "")));
+        r.startStep("1","B");
+        assertThat(r.builds.get(0).steps.get(0).status, equalTo("passed"));
+        assertThat(r.builds.get(0).steps.get(1).status, equalTo("running"));
+    }
+
+    @Test
     public void radiatorThatIsSentToBrowserShouldNotContainSecret() {
         Radiator r = rad("X", "sseeccrreett", stepNames("A"), build("1", "running", 0, step("A", 0, "running")));
         assertNotNull(r.secret);

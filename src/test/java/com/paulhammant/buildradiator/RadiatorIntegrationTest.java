@@ -267,31 +267,6 @@ public class RadiatorIntegrationTest {
     }
 
     @Test
-    public void radiatorCanBeUpdatedWithWithBuildStepCompletionAndStartOfNewStepInOneGo() {
-
-        Radiator rad = rad("aaa", "sseeccrreett", stepNames("A", "B"),
-                build("1", "running", 0, step("A", 0, "running"), step("B")));
-
-        app = new TestVersionOfBuildRadiatorApp(rad);
-        startApp();
-
-        given()
-                .params("build", "1", "pStep", "A", "step", "B", "secret", "sseeccrreett")
-            .when()
-                .post("/r/aaa/stepPassedAndStartStep")
-            .then()
-                .statusCode(200)
-                .body(equalTo("OK"));
-
-        ArrayList<Step> steps = rad.builds.get(0).steps;
-        assertThat(steps.get(0).name, equalTo("A"));
-        assertThat(steps.get(0).status, equalTo("passed"));
-        assertThat(steps.get(1).name, equalTo("B"));
-        assertThat(steps.get(1).status, equalTo("running"));
-
-    }
-
-    @Test
     public void radiatorCanBeUpdatedWithWithBuildStepFailure() {
 
         Radiator rad = rad("aaa", "sseeccrreett", stepNames("A", "B"),

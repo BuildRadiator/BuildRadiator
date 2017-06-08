@@ -38,7 +38,7 @@ public class Radiator {
         lastUpdated = System.currentTimeMillis();
         for (Build build : this.builds) {
             if (build.ref.equals(buildNum)) {
-                build.start(step);
+                build.startStep(step);
                 return;
             }
         }
@@ -56,7 +56,7 @@ public class Radiator {
         lastUpdated = System.currentTimeMillis();
         for (Build build : this.builds) {
             if (build.ref.equals(buildRef)) {
-                build.pass(step);
+                build.stepPassed(step);
                 return;
             }
         }
@@ -67,7 +67,7 @@ public class Radiator {
         lastUpdated = System.currentTimeMillis();
         for (Build build : this.builds) {
             if (build.ref.equals(buildRef)) {
-                build.fail(step);
+                build.stepFailed(step);
                 return;
             }
         }

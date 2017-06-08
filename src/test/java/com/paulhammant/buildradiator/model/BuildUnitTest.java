@@ -71,33 +71,33 @@ public class BuildUnitTest {
     @Test(expected = UnknownStep.class)
     public void unknownStepCannotBeStarted() {
         Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, ""));
-        b.start("C");
+        b.startStep("C");
     }
 
     @Test(expected = UnknownStep.class)
     public void unknownStepCannotPass() {
         Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, ""));
-        b.pass("C");
+        b.stepPassed("C");
     }
 
     @Test(expected = UnknownStep.class)
     public void unknownStepCannotFail() {
         Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, ""));
-        b.fail("C");
+        b.stepFailed("C");
     }
 
     @Test(expected = WrongBuildState.class)
     public void onlyRunningBuildCanFail() {
         Build b = build("1", "running", 0, step("A", 100, "passed"), step("B", 200, "running"));
-        b.fail("B");
+        b.stepFailed("B");
         b = build("1", "", 0, step("A", 100, "passed"), step("B", 200, "running"));
-        b.fail("B");
+        b.stepFailed("B");
     }
 
 
     private void startThrowsWrongBuildState(Build b, String step) {
         try {
-            b.start(step);
+            b.startStep(step);
             fail();
         } catch (WrongBuildState e) {
         }
@@ -105,7 +105,7 @@ public class BuildUnitTest {
 
     private void passThrowsWrongBuildState(Build b, String step) {
         try {
-            b.pass(step);
+            b.stepPassed(step);
             fail();
         } catch (WrongBuildState e) {
         }
@@ -113,7 +113,7 @@ public class BuildUnitTest {
 
     private void failThrowsWrongBuildState(Build b, String step) {
         try {
-            b.pass(step);
+            b.stepPassed(step);
             fail();
         } catch (WrongBuildState e) {
         }

@@ -21,21 +21,25 @@ public class Build {
         }
     }
 
-    public void start(String step) {
+    public void startStep(String step) {
         if (!status.equals("") && !status.equals("running")) {
             throw new WrongBuildState();
         }
-        for (Step s : steps) {
+        for (int i = 0; i < steps.size(); i++) {
+            Step s = steps.get(i);
             if (s.name.equals(step)) {
                 s.start();
                 status = "running";
+                if (i>0 && steps.get(i-1).status.equals("running")) {
+                    steps.get(i-1).pass();
+                }
                 return;
             }
         }
         throw new UnknownStep();
     }
 
-    public void pass(String step) {
+    public void stepPassed(String step) {
         if (!status.equals("running")) {
             throw new WrongBuildState();
         }
@@ -57,7 +61,7 @@ public class Build {
         dur = (int) (System.currentTimeMillis() - started);
     }
 
-    public void fail(String step) {
+    public void stepFailed(String step) {
         if (!status.equals("running")) {
             throw new WrongBuildState();
         }

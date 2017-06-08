@@ -40,7 +40,6 @@ public class BuildRadiatorApp extends Jooby {
         use("/r")
                 .get("/:radiatorCode/", this::getRadiatorByCode) // used by radiator.html
                 .post("/:radiatorCode/stepPassed", this::stepPassed)
-                .post("/:radiatorCode/stepPassedAndStartStep", this::stepPassedAndStartStep)
                 .post("/:radiatorCode/stepFailed", this::stepFailed)
                 .post("/:radiatorCode/startStep", this::startStep)
                 .post("/:radiatorCode/buildCancelled", this::buildCancelled)
@@ -137,20 +136,6 @@ public class BuildRadiatorApp extends Jooby {
         String secret = getRadiatorSecretButVerifyParamFirst(req);
         getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, step);
         rsp.send("OK");
-    }
-
-    protected void stepPassedAndStartStep(Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        String build = getBuildIdButVerifyParamFirst(req);
-        String step = getStepButVerifyParamFirst(req);
-        String pStep = getPreviousStepButVerifyParamFirst(req);
-        String secret = getRadiatorSecretButVerifyParamFirst(req);
-        Radiator radiator = getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret);
-        radiator.stepPassed(build, pStep);
-        radiator.startStep(build, step);
-        rsp.send("OK");
-
     }
 
     private String getRadiatorCodeButVerifyParamFirst(Request req) {
