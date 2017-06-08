@@ -35,12 +35,13 @@
   <properties>
     <jooby.version>${project.parent.version}</jooby.version>
     <application.class>com.paulhammant.buildradiator.BuildRadiatorMain</application.class>
-    <!--<buildradiator.trace>true</buildradiator.trace>-->
-    <buildradiator.0>Compile=*</buildradiator.0>
-    <buildradiator.1>Unit Tests=buildradiator/process-test-resources/default-testResources</buildradiator.1>
-    <buildradiator.2>Integration Tests=buildradiator/test/integration-tests</buildradiator.2>
-    <buildradiator.3>Functional Tests=buildradiator/test/functional-tests</buildradiator.3>
-    <buildradiator.4>Package=*</buildradiator.4>
+    <buildradiator.trace>true</buildradiator.trace>
+    <buildradiator.0>Circle_CI_Startup=*</buildradiator.0>
+    <buildradiator.1>Compile=buildradiator/compile/default-compile</buildradiator.1>
+    <buildradiator.2>Unit Tests=buildradiator/process-test-resources/default-testResources</buildradiator.2>
+    <buildradiator.3>Integration Tests=buildradiator/test/integration-tests</buildradiator.3>
+    <buildradiator.4>Functional Tests=buildradiator/test/functional-tests</buildradiator.4>
+    <buildradiator.5>Package=*</buildradiator.5>
   </properties>
 
   <dependencies>

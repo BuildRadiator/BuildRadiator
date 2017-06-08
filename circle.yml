@@ -6,11 +6,5 @@ test:
     - mvn package -Dmaven.ext.class.path=lib/buildradiatorextension-1.1.jar
 
 machine:
-  pre:
-    - echo "machine pre"
-machine:
   post:
-    - echo "machine post"
-dependencies:
-  pre:
-    - echo "dependencies pre"
+    - curl -X POST -F "build=${buildId}" -F "step=Circle_CI_Startup" -F "secret=${radiatorSecret}"  "http://buildradiator.org/r/${radiatorCode}/startStep"
