@@ -4,3 +4,13 @@ test:
     - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} $CIRCLE_TEST_REPORTS/junit/ \;
   override:
     - mvn package -Dmaven.ext.class.path=lib/buildradiatorextension-1.1.jar
+
+machine:
+  pre:
+    - echo "machine pre"
+machine:
+  post:
+    - echo "machine post"
+dependencies:
+  pre:
+    - echo "dependencies pre"
