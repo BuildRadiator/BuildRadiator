@@ -99,7 +99,7 @@ public class RadiatorStoreUnitTest {
     }
 
     private void assertQwertyRadiatorHasBeenCalledOnce() throws InterruptedException {
-        Thread.sleep(10);
+        Thread.sleep(15);
         assertThat(radCode, equalTo("QWERTY"));
         assertThat(rad, sameInstance(rad));
         assertThat(called, equalTo(1));
