@@ -87,7 +87,7 @@ public class RadiatorStoreUnitTest {
         saverThreadShouldDoItsBusinessForUnsavedRadiatorJustOnce();
         Radiator rad = radStore.get("QWERTY", "127.0.0.1");
         rad.lastUpdated = System.currentTimeMillis();
-        Thread.sleep(4);
+        Thread.sleep(10);
         assertThat(called, equalTo(2));
     }
 
