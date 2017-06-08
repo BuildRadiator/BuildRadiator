@@ -38,8 +38,8 @@
     <!--<buildradiator.trace>true</buildradiator.trace>-->
     <buildradiator.0>Compile=*</buildradiator.0>
     <buildradiator.1>Unit Tests=buildradiator/process-test-resources/default-testResources</buildradiator.1>
-    <buildradiator.2>Service Tests=buildradiator/test/integration-tests</buildradiator.2>
-    <buildradiator.3>Selenium Tests=buildradiator/test/functional-tests</buildradiator.3>
+    <buildradiator.2>Service Tests=buildradiator/test/service-tests</buildradiator.2>
+    <buildradiator.3>Selenium Tests=buildradiator/test/selenium-tests</buildradiator.3>
     <buildradiator.4>Package=*</buildradiator.4>
   </properties>
 
@@ -167,9 +167,9 @@
               </includes>
             </configuration>
           </execution>
-          <!-- Second execution is Integration tests, stop there if any failures -->
+          <!-- Second execution is Service tests, stop there if any failures -->
           <execution>
-            <id>integration-tests</id>
+            <id>service-tests</id>
               <goals>
                 <goal>test</goal>
               </goals>
@@ -183,9 +183,9 @@
               </includes>
             </configuration>
           </execution>
-          <!-- Third execution is Functional tests, stop there if any failures -->
+          <!-- Third execution is Selenium tests, stop there if any failures -->
           <execution>
-            <id>functional-tests</id>
+            <id>selenium-tests</id>
             <goals>
               <goal>test</goal>
             </goals>
