@@ -10,4 +10,4 @@ machine:
     - curl -X POST -F "build=${buildId}" -F "step=Circle CI Startup" -F "secret=${radiatorSecret}"  "http://buildradiator.org/r/${radiatorCode}/startStep"
 dependencies:
   pre:
-    - echo "dependencies pre - ${buildId}"
+    - echo "dependencies pre - ${buildId} ${radiatorSecret} ${radiatorCode}"
