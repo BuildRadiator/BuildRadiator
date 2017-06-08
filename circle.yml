@@ -7,7 +7,7 @@ test:
 
 machine:
   post:
-    - curl -X POST -F "build=${buildId}" -F "step=Circle_CI_Startup" -F "secret=${radiatorSecret}"  "http://buildradiator.org/r/${radiatorCode}/startStep"
+    - curl -X POST -F "build=${buildId}" -F "step=Circle CI Startup" -F "secret=${radiatorSecret}"  "http://buildradiator.org/r/${radiatorCode}/startStep"
 dependencies:
   pre:
     - echo "dependencies pre - ${buildId}"
