@@ -49,7 +49,7 @@ knock yourself out with secret project names, etc.
 
 Current build status: ![](https://circleci.com/gh/BuildRadiator/BuildRadiator.png?style=shield&circle-token=64772cdbf7a8b6c2c6bbfb6a8f52802e0b662a24)
 
-[Build Radiator for this repo](https://buildradiator.org/r#b7n63m6hcb9sm2ttdn/Build_Radiator_DotOrg_Master)
+[Build Radiator for this repo](https://buildradiator.org/r#bv5bp39e4hg61cm580/Build_Radiator_DotOrg_Master)
 
 Command to to run build:
 
