@@ -3,6 +3,7 @@ package com.paulhammant.buildradiator;
 import com.paulhammant.buildradiator.model.Radiator;
 import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 import org.seleniumhq.selenium.fluent.FluentWebElement;
 import org.seleniumhq.selenium.fluent.FluentWebElementVistor;
@@ -26,7 +27,10 @@ public class RadiatorWebDriverTest {
     @BeforeClass
     public static void sharedForAllTests() {
         // Keep the WebDriver browser window open between tests
-        DRIVER = new ChromeDriver();
+        ChromeOptions co = new ChromeOptions();
+        co.addArguments("headless");
+        co.addArguments("window-size=1200x800");
+        DRIVER = new ChromeDriver(co);
         FWD = new FluentWebDriver(DRIVER);
     }
 
