@@ -4,6 +4,7 @@ import org.jooby.Request;
 import org.jooby.Results;
 import org.jooby.json.Jackson;
 import org.jooby.test.ServerFeature;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class JoobyIssueReportingShim extends ServerFeature {
@@ -26,14 +27,14 @@ public class JoobyIssueReportingShim extends ServerFeature {
         });
     }
 
-    @Test
+    @Test @Ignore
     public void iAmNotSureHowToGetThatResultsOKThingIsWorking() throws Exception {
         request()
                 .get("/resultsOkTest")
                 .expect(200);
     }
 
-    @Test
+    @Test @Ignore
     public void iAmNotSureHowToGetThatResultsOKThingIsWorking2() throws Exception {
         request()
                 .get("/resultsOkTest")
