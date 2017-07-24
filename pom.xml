@@ -14,7 +14,7 @@
   <artifactId>buildradiator</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Build Radiator</name>
+  <name>Build Radiator</name> 
 
   <description>Build Radiator Site</description>
   <url>http://github.com/BuildRadiator/BuildRadiator</url>
