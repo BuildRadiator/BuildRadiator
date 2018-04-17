@@ -113,7 +113,7 @@
     <dependency>
       <groupId>org.seleniumhq.selenium.fluent</groupId>
       <artifactId>fluent-selenium</artifactId>
-      <version>1.18</version>
+      <version>1.19</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
