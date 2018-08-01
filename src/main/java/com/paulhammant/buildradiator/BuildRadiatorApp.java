@@ -37,14 +37,17 @@ public class BuildRadiatorApp extends Jooby {
             }
         });
 
-        use("/r")
-                .get("/:radiatorCode/", this::getRadiatorByCode) // used by radiator.html
-                .post("/:radiatorCode/stepPassed", this::stepPassed)
-                .post("/:radiatorCode/stepFailed", this::stepFailed)
-                .post("/:radiatorCode/startStep", this::startStep)
-                .post("/:radiatorCode/buildCancelled", this::buildCancelled)
-                .post("/:radiatorCode/updateIps", this::updateIps)
-                .post("/create", this::createRadiator);
+        path("/r", () -> {
+            // used by radiator.html
+            get("/:radiatorCode/", this::getRadiatorByCode);
+            post("/:radiatorCode/stepPassed", this::stepPassed);
+            post("/:radiatorCode/stepFailed", this::stepFailed);
+            post("/:radiatorCode/startStep", this::startStep);
+            post("/:radiatorCode/buildCancelled", this::buildCancelled);
+            post("/:radiatorCode/updateIps", this::updateIps);
+            post("/create", this::createRadiator);
+
+        });
 
         get("/_ah/health", () -> {
             return "yup, am healthy, Google App Engine";

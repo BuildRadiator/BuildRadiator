@@ -25,15 +25,18 @@ public class TestVersionOfBuildRadiatorApp extends BuildRadiatorApp {
     }
 
     protected void serveIndexPageButWithReplacements(String... replacements) {
-        use("").get("/r/", (request, response) -> {
-            String orig = new String(Files.readAllBytes(Paths.get("src/main/resources/radiator.html")));
-            for (int i = 0; i < replacements.length; i = i +2) {
-                String from = replacements[i];
-                String to = replacements[i+1];
-                orig = orig.replace(from, to);
-            }
-            response.type("text/html");
-            response.send(orig);
+
+        path("", () -> {
+            get("/r/", (request, response) -> {
+                String orig = new String(Files.readAllBytes(Paths.get("src/main/resources/radiator.html")));
+                for (int i = 0; i < replacements.length; i = i +2) {
+                    String from = replacements[i];
+                    String to = replacements[i+1];
+                    orig = orig.replace(from, to);
+                }
+                response.type("text/html");
+                response.send(orig);
+            });
         });
     }
 

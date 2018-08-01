@@ -4,6 +4,7 @@ import com.paulhammant.buildradiator.model.Build;
 import com.paulhammant.buildradiator.model.CreatedRadiator;
 import com.paulhammant.buildradiator.model.Radiator;
 import com.paulhammant.buildradiator.model.Step;
+import io.restassured.RestAssured;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
