@@ -28,7 +28,10 @@ public class RadiatorWebDriverTest {
     public static void sharedForAllTests() {
         // Keep the WebDriver browser window open between tests
         ChromeOptions co = new ChromeOptions();
-        co.addArguments("headless");
+        boolean headless = Boolean.parseBoolean(System.getProperty("HEADLESS", "true"));
+        if (headless) {
+            co.addArguments("headless");
+        }
         co.addArguments("window-size=1200x800");
         DRIVER = new ChromeDriver(co);
         FWD = new FluentWebDriver(DRIVER);

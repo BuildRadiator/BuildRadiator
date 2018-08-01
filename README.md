@@ -63,13 +63,19 @@ In about 30 seconds, the build does:
 2. unit test compile, 
 3. unit test invocation, 
 4. integration test invocation, 
-5. functional test invocation (WebDriver)
+5. functional test invocation (WebDriver - but invisible)
 6. distribution creation (uberjar style jar)
 
 ## Build prerequsites
 
 1. Chromedriver.exe for your platform (homebrew has it)
 2. Maven 3+
+
+## Watching the Selenium tests speed past
+
+```
+mvn clean install -DHEADLESS=false
+```
 
 ## Deploying to Google AppEngine
 
