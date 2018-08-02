@@ -58,8 +58,8 @@
 
     <dependency>
       <groupId>com.google.cloud.datastore</groupId>
-      <artifactId>datastore-v1-proto-client</artifactId>
-      <version>1.6.0-ph</version>
+      <artifactId>shaded-datastore-v1-proto-client</artifactId>
+      <version>1.6.0</version>
       <exclusions>
         <exclusion>
           <groupId>com.google.guava</groupId>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Because datastore-v1-proto-client v1.6.0 contains many out of date and clashing deps ...
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>shaded-datastore-v1-proto-client</artifactId>
+
+    <name>Shaded version of ${project.parent.groupId}:${project.parent.artifactId}</name>
+
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.google.cloud.datastore</groupId>
+        <artifactId>datastore-v1-proto-client-parent</artifactId>
+        <version>1.6.0</version>
+    </parent>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.google.cloud.datastore</groupId>
+            <artifactId>datastore-v1-proto-client</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <!--finalName>${project.artifactId}-${project.version}-shaded</finalName-->
+                            <relocations>
+                                <relocation>
+                                    <pattern>com.google.common</pattern>
+                                    <shadedPattern>googlecloud.shaded.com.google.common</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.codehaus.jackson</pattern>
+                                    <shadedPattern>googlecloud.shaded.org.codehaus.jackson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.fasterxml.jackson</pattern>
+                                    <shadedPattern>googlecloud.shaded.com.fasterxml.jackson</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.http</pattern>
+                                    <shadedPattern>googlecloud.shaded.org.apache.http</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons</pattern>
+                                    <shadedPattern>googlecloud.shaded.org.apache.commons</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <artifactSet>
+                                <includes>
+                                    <include>*:*</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>

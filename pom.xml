@@ -27,6 +27,7 @@
     </scm>
 
     <modules>
+        <module>google-datastore-hack</module>
         <module>root</module>
         <module>main</module>
     </modules>
