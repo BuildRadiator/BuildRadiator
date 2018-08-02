@@ -28,6 +28,7 @@
 
     <modules>
         <module>root</module>
+        <module>main</module>
     </modules>
 
 </project>

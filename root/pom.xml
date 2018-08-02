@@ -11,10 +11,10 @@
   </parent>
 
   <groupId>com.paulhammant</groupId>
-  <artifactId>buildradiator</artifactId>
+  <artifactId>buildradiator-root</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Build Radiator</name>
+  <name>Build Radiator Root Context</name>
 
   <description>Build Radiator Site</description>
   <url>http://github.com/BuildRadiator/BuildRadiator</url>
@@ -34,7 +34,7 @@
 
   <properties>
     <jooby.version>${project.parent.version}</jooby.version>
-    <application.class>com.paulhammant.buildradiator.BuildRadiatorMain</application.class>
+    <application.class>com.paulhammant.buildradiator.main.BuildRadiatorMain</application.class>
     <!--<buildradiator.trace>true</buildradiator.trace>-->
     <buildradiator.0>Compile=*</buildradiator.0>
     <buildradiator.1>Unit Tests=buildradiator/process-test-resources/default-testResources</buildradiator.1>
@@ -134,13 +134,7 @@
       </resource>
     </resources>
 
-    <finalName>buildradiator</finalName>
     <plugins>
-      <!-- Build fat jar -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
