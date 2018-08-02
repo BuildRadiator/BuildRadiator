@@ -1,5 +1,6 @@
 package com.paulhammant.buildradiator.main;
 
+import com.paulhammant.buildradiator.editor.BuildRadiatorEditor;
 import com.paulhammant.buildradiator.root.BuildRadiatorRoot;
 import org.jooby.Jooby;
 
@@ -9,6 +10,7 @@ public class BuildRadiatorMain extends Jooby {
 
     public BuildRadiatorMain() {
         use("/", new BuildRadiatorRoot());
+        use("/editor", new BuildRadiatorEditor());
     }
 
     public static void main(final String[] args) {

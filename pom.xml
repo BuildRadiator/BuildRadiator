@@ -30,6 +30,7 @@
         <module>google-datastore-hack</module>
         <module>root</module>
         <module>main</module>
+        <module>editor</module>
     </modules>
 
 </project>
