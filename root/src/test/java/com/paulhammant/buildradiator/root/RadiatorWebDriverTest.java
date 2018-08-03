@@ -119,7 +119,7 @@ public class RadiatorWebDriverTest {
     }
 
     @Test
-    public void confirmDataRefreshes()  {
+    public void confirmDataRefreshes() throws InterruptedException {
 
         Radiator rad = rad("xxx", "sseeccrreett", stepNames("A"),
                 build("1", "running", 0, step("A", 0, "running")));

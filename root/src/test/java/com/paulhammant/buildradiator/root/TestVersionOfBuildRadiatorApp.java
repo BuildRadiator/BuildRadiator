@@ -1,12 +1,16 @@
 package com.paulhammant.buildradiator.root;
 
-import com.paulhammant.buildradiator.root.BuildRadiatorRoot;
 import com.paulhammant.buildradiator.root.model.Radiator;
+import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResources;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class TestVersionOfBuildRadiatorApp extends BuildRadiatorRoot {
+
+    {
+        use(new BuildRadiatorStaticResources());
+    }
 
     protected boolean appStarted;
 
@@ -28,7 +32,7 @@ public class TestVersionOfBuildRadiatorApp extends BuildRadiatorRoot {
 
         path("", () -> {
             get("/r/", (request, response) -> {
-                String orig = new String(Files.readAllBytes(Paths.get("src/main/resources/radiator.html")));
+                String orig = new String(Files.readAllBytes(Paths.get("src/main/resources/root/radiator.html")));
                 for (int i = 0; i < replacements.length; i = i +2) {
                     String from = replacements[i];
                     String to = replacements[i+1];

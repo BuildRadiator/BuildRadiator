@@ -54,13 +54,7 @@ public class BuildRadiatorRoot extends Jooby {
         });
         // Routes /_ah/start and /_ah/stop - not enabled on Flex containers
 
-        assets("/", "index.html");
-        assets("/br.png", "br.png");
-        assets("/favicon.png", "favicon.png");
-        assets("/robots.txt", "robots.txt");
-        assets("/moment.min.js", "moment.min.js");
-        assets("/moment-duration-format.js", "moment-duration-format.js");
-        assets("/vue.min.js", "vue.min.js");
+        assets("/", "root/index.html");
         serveRadiatorPage();
 
         err(RadiatorDoesntExist.class, (req, rsp, err) -> {
@@ -101,7 +95,7 @@ public class BuildRadiatorRoot extends Jooby {
     }
 
     protected void serveRadiatorPage() {
-        assets("/r/", "radiator.html");
+        assets("/r/", "root/radiator.html");
         // From https://gist.github.com/tildebyte/c85f65c1e474a6c4a6188755e710979b for LetsEncrypt
         //    assets("/well-known/acme-challenge/xxx", "well-known/acme-challenge/xxx");
         //    assets("/.well-known/acme-challenge/xxx", "well-known/acme-challenge/xxx");

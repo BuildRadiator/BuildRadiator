@@ -6,8 +6,7 @@ import org.jooby.Jooby;
 public class BuildRadiatorEditor extends Jooby {
 
     {
-        assets("/vue.min.js", "vue.min.js");
-        assets("/", "index.html");
+        assets("/", "editor/index.html");
         err(404, (req, rsp, err) -> {
             System.out.println(req.route() + " page missing from " + req.ip());
             rsp.status(404);

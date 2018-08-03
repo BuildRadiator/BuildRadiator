@@ -23,6 +23,12 @@
             <groupId>com.google.cloud.datastore</groupId>
             <artifactId>datastore-v1-proto-client</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava-jdk5</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
@@ -57,7 +63,6 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <!--finalName>${project.artifactId}-${project.version}-shaded</finalName-->
                             <relocations>
                                 <relocation>
                                     <pattern>com.google.common</pattern>
@@ -84,6 +89,9 @@
                                 <includes>
                                     <include>*:*</include>
                                 </includes>
+                                <excludes>
+                                    <exclude>com.google.code.findbugs:jsr305</exclude>
+                                </excludes>
                             </artifactSet>
                         </configuration>
                     </execution>

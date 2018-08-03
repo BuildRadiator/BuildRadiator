@@ -37,6 +37,14 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>com.paulhammant</groupId>
+      <artifactId>buildradiator-static-resources</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Server -->
     <dependency>
       <groupId>org.jooby</groupId>

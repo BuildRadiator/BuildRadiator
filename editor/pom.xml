@@ -25,11 +25,17 @@
 
   <properties>
     <jooby.version>${project.parent.version}</jooby.version>
-    <application.class>com.paulhammant.buildradiator.main.BuildRadiatorMain</application.class>
-    <!--<buildradiator.trace>true</buildradiator.trace>-->
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>com.paulhammant</groupId>
+      <artifactId>buildradiator-static-resources</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Server -->
     <dependency>
       <groupId>org.jooby</groupId>

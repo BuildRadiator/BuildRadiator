@@ -11,38 +11,16 @@
   </parent>
 
   <groupId>com.paulhammant</groupId>
-  <artifactId>buildradiator-main</artifactId>
+  <artifactId>buildradiator-static-resources</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Build Radiator Main Webapp</name>
+  <name>Build Radiator Static Web Resources</name>
 
   <properties>
     <jooby.version>${project.parent.version}</jooby.version>
-    <application.class>com.paulhammant.buildradiator.main.BuildRadiatorMain</application.class>
   </properties>
 
   <dependencies>
-
-    <dependency>
-      <groupId>com.paulhammant</groupId>
-      <artifactId>buildradiator-root</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.paulhammant</groupId>
-      <artifactId>buildradiator-editor</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.paulhammant</groupId>
-      <artifactId>buildradiator-static-resources</artifactId>
-      <version>${project.version}</version>
-      <scope>compile</scope>
-    </dependency>
 
     <!-- Server -->
     <dependency>
@@ -73,19 +51,7 @@
       </resource>
     </resources>
 
-    <finalName>buildradiator</finalName>
     <plugins>
-      <!-- Build fat jar -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-shade-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>com.google.cloud.tools</groupId>
-        <artifactId>appengine-maven-plugin</artifactId>
-        <version>1.3.1</version>
-      </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
