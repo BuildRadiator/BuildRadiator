@@ -25,7 +25,7 @@ public class RadiatorWebDriverTest {
     public static void sharedForAllTests() {
         // Keep the WebDriver browser window open between tests
         ChromeOptions co = new ChromeOptions();
-        boolean headless = Boolean.parseBoolean(System.getProperty("HEADLESS", "true"));
+        boolean headless = Boolean.parseBoolean(System.getProperty("HEADLESS", "false"));
         if (headless) {
             co.addArguments("headless");
         }

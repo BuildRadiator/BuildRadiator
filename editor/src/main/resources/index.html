@@ -9,26 +9,15 @@
 	<script type='text/javascript'>//<![CDATA[
     window.onload=function(){
 
-        var lhash = location.hash;
+        var lhash = location.hash.replace(new RegExp("_", 'g'), " ");
         var hashParts = lhash.substr(1).split("/");
-
-        function mapReplacements(hashParts) {
-
-            var replacements = {};
-            for (var i = 0; i < hashParts.length; i = i +2) {
-                if (hashParts[i] !== undefined && hashParts[i+1] !== undefined) {
-                    replacements[hashParts[i]] = hashParts[i+1].replace(new RegExp("_", 'g'), " ");
-				}
-            }
-            return replacements;
-        }
 
         var radiator_meta = new Vue({
             el: '#editor',
             data: {
                 code: hashParts.shift(),
-				title: hashParts.shift().replace(new RegExp("_", 'g'), " "),
-				replacements: mapReplacements(hashParts)
+				title: hashParts.shift(),
+				replacements: hashParts
             },
             methods: {
             }
@@ -39,11 +28,16 @@
 <body style="height: 100%">
 <div id="editor" style="width: 100%; height: 100%">
 
-	<p>Start of editor</p>
+	<p>Editor, code, title and step names</p>
 
 	<div>Code: {{ code }}</div>
 	<div>Title: {{ title }}</div>
-	<div>Replacements: {{ JSON.stringify(replacements) | pretty }}</div>
+	<div>Replacements1:</div>
+	<div style="width: 100%" v-for="replNum in ((replacements.length /2) -1)">
+		<span>{{replacements[replNum*2]}} - {{replacements[(replNum*2)+1]}}</span>
+	</div>
+
+	<button>Save</button>
 
 </div>
 </body>

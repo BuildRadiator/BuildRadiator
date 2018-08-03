@@ -21,7 +21,7 @@ public class EditorWebDriverTest {
     public static void sharedForAllTests() {
         // Keep the WebDriver browser window open between tests
         ChromeOptions co = new ChromeOptions();
-        boolean headless = Boolean.parseBoolean(System.getProperty("HEADLESS", "true"));
+        boolean headless = Boolean.parseBoolean(System.getProperty("HEADLESS", "false"));
         if (headless) {
             co.addArguments("headless");
         }
@@ -55,19 +55,19 @@ public class EditorWebDriverTest {
     @Test
     public void editorContainsContrivedTitle() {
         app = new TestVersionOfEditorApp();
-        startAppAndOpenWebDriverOnRadiatorPage("#abcde12345/a_contrived_title/a/aa/b/bb/c/cc");
+        startAppAndOpenWebDriverOnEditorPage("abcde12345/a_contrived_title/a/aa/b/bb/c/cc");
         FWD.div().getText().shouldContain("a contrived title");
     }
 
     @Test
     public void editorContainsDemoRadiatorTitle() {
         app = new TestVersionOfEditorApp();
-        startAppAndOpenWebDriverOnRadiatorPage("#ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
+        startAppAndOpenWebDriverOnEditorPage("ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
         FWD.div().getText().shouldContain("Example Build Radiator");
     }
 
 
-    private void startAppAndOpenWebDriverOnRadiatorPage(String path) {
+    private void startAppAndOpenWebDriverOnEditorPage(String path) {
         app.start("server.join=false");
         while (!app.appStarted) {
             try {
@@ -75,7 +75,7 @@ public class EditorWebDriverTest {
             } catch (InterruptedException e) {
             }
         }
-        DRIVER.get(domain + "/" + path);
+        DRIVER.get(domain + "/#" + path);
     }
 
 

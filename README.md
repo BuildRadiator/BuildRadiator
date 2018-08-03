@@ -45,13 +45,13 @@ knock yourself out with secret project names, etc.
 
 [See Wiki Page on consumer displays](//github.com/BuildRadiator/BuildRadiator/wiki/Consumer-Displays)
 
-# Building the application yourself
+# Building this technology yourself
 
 Current build status: ![](https://circleci.com/gh/BuildRadiator/BuildRadiator.png?style=shield&circle-token=64772cdbf7a8b6c2c6bbfb6a8f52802e0b662a24)
 
 [Build Radiator for this repo](https://buildradiator.org/r#bv5bp39e4hg61cm580/Build_Radiator_DotOrg_Master)
 
-Command to to run build:
+Command to run the build:
 
 ```
 mvn clean install
@@ -68,13 +68,13 @@ In about 30 seconds, the build does:
 
 ## Build prerequsites
 
-1. Chromedriver.exe for your platform (homebrew has it)
+1. Chromedriver.exe for your platform (see [quick installation instructions here](https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver))
 2. Maven 3+
 
-## Watching the Selenium tests speed past
+## Making Selenium's browser invisible
 
 ```
-mvn clean install -DHEADLESS=false
+mvn clean install -DHEADLESS=true
 ```
 
 ## Deploying to Google AppEngine
