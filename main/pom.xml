@@ -19,12 +19,6 @@
   <properties>
     <jooby.version>${project.parent.version}</jooby.version>
     <application.class>com.paulhammant.buildradiator.BuildRadiatorMain</application.class>
-    <!--<buildradiator.trace>true</buildradiator.trace>-->
-    <buildradiator.0>Compile=*</buildradiator.0>
-    <buildradiator.1>Unit Tests=buildradiator/process-test-resources/default-testResources</buildradiator.1>
-    <buildradiator.2>Service Tests=buildradiator/test/service-tests</buildradiator.2>
-    <buildradiator.3>Selenium Tests=buildradiator/test/selenium-tests</buildradiator.3>
-    <buildradiator.4>Package=*</buildradiator.4>
   </properties>
 
   <dependencies>
