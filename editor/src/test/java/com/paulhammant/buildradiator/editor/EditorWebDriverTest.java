@@ -8,6 +8,9 @@ import org.junit.Test;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
+import org.seleniumhq.selenium.fluent.FluentWebElements;
+
+import static org.junit.Assert.assertEquals;
 
 public class EditorWebDriverTest {
 
@@ -31,7 +34,8 @@ public class EditorWebDriverTest {
     }
 
     @AfterClass
-    public static void tearDown() {
+    public static void tearDown() throws InterruptedException {
+        //Thread.sleep(1000000);
         DRIVER.close();
         DRIVER.quit();
     }
@@ -53,19 +57,32 @@ public class EditorWebDriverTest {
     }
 
     @Test
-    public void editorContainsContrivedTitle() {
+    public void editorDisplayRemovesUnderScoresFromContrivedTitle() {
         app = new TestVersionOfEditorApp();
-        startAppAndOpenWebDriverOnEditorPage("abcde12345/a_contrived_title/a/aa/b/bb/c/cc");
+        startAppAndOpenWebDriverOnEditorPage("abcde12345/a_contrived_title/0/a_a/1/b_b/2/c_c");
         FWD.div().getText().shouldContain("a contrived title");
+        FluentWebElements lis = FWD.lis();
+        lis.get(0).getText().shouldContain("0:");
+        lis.get(0).input().getAttribute("value").shouldContain("a a");
+        lis.get(1).getText().shouldContain("1:");
+        lis.get(1).input().getAttribute("value").shouldContain("b b");
+        lis.get(2).getText().shouldContain("2:");
+        lis.get(2).input().getAttribute("value").shouldContain("c c");
     }
 
     @Test
-    public void editorContainsDemoRadiatorTitle() {
-        app = new TestVersionOfEditorApp();
-        startAppAndOpenWebDriverOnEditorPage("ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
-        FWD.div().getText().shouldContain("Example Build Radiator");
-    }
+    public void editorCanChangeTitleAndStepDescriptionsFromDemoRadiatorAndReturn() {
+        app = new TestVersionOfEditorApp() {{
+            get("/r", () -> "<html><body>OK</body></html>");
+        }};
 
+        startAppAndOpenWebDriverOnEditorPage("ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
+        FWD.input().clearField().sendKeys("T I T L E");
+        FWD.li().input().clearField().sendKeys("new STEP desc");
+        FWD.button().click();
+        FWD.url().shouldContain("/r#ueeusvcipmtsb755uq/T_I_T_L_E/c/new_STEP_desc/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
+        FWD.body().getText().shouldContain("OK"); // from mock response above
+    }
 
     private void startAppAndOpenWebDriverOnEditorPage(String path) {
         app.start("server.join=false");

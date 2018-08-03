@@ -15,11 +15,16 @@
         var radiator_meta = new Vue({
             el: '#editor',
             data: {
-                code: hashParts.shift(),
-				title: hashParts.shift(),
-				replacements: hashParts
+                locn: {
+                    code: hashParts.shift(),
+                    title: hashParts.shift(),
+                    replacements: hashParts
+				}
             },
             methods: {
+                all_done: function (event) {
+                    location.href = ("/r#" + this.locn.code + "/" + this.locn.title + "/" + this.locn.replacements.join("/")).replace(new RegExp(" ", 'g'), "_");
+                }
             }
         })
     }//]]> 
@@ -28,16 +33,29 @@
 <body style="height: 100%">
 <div id="editor" style="width: 100%; height: 100%">
 
-	<p>Editor, code, title and step names</p>
+	<h2>Editor, code, title and steps</h2>
 
-	<div>Code: {{ code }}</div>
-	<div>Title: {{ title }}</div>
-	<div>Replacements:</div>
-	<div style="width: 100%" v-for="replNum in ((replacements.length /2))">
-		<span>{{replacements[(replNum-1)*2]}} - {{replacements[((replNum-1)*2)+1]}}</span>
-	</div>
+	<div>Radiator Code: {{ locn.code }}</div>
+	<br/>
+	<div>Page Title: <input v-model="locn.title" placeholder="title"></div>
+	<br/>
+	<div>Step codes and corresponding descriptions:</div>
+	<ol>
+		<li style="width: 100%" v-for="replNum in ((locn.replacements.length /2))">
+			<span>
+				<span>{{ locn.replacements[(replNum-1)*2]}}: <span>
+				<input v-model="locn.replacements[((replNum-1)*2)+1]" placeholder="description">
+			</span>
+		</li>
+	</ol>
 
-	<button>Save</button>
+	<button v-on:click="all_done">Done</button>
+
+	<pre>
+		<code>
+			{{locn | pretty}}
+		</code>
+	</pre>
 
 </div>
 </body>
