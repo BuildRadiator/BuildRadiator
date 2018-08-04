@@ -37,7 +37,7 @@ public class BuildRadiatorRoot extends Jooby {
             }
         });
 
-        path("/r", () -> {
+        path(getBasePath(), () -> {
             // used by radiator.html
             get("/:radiatorCode/", this::getRadiatorByCode);
             post("/:radiatorCode/stepPassed", this::stepPassed);
@@ -94,8 +94,12 @@ public class BuildRadiatorRoot extends Jooby {
 
     }
 
+    public String getBasePath() {
+        return "/r";
+    }
+
     protected void serveRadiatorPage() {
-        assets("/r/", "root/radiator.html");
+        assets (getBasePath() + "/", "root/radiator.html");
         // From https://gist.github.com/tildebyte/c85f65c1e474a6c4a6188755e710979b for LetsEncrypt
         //    assets("/well-known/acme-challenge/xxx", "well-known/acme-challenge/xxx");
         //    assets("/.well-known/acme-challenge/xxx", "well-known/acme-challenge/xxx");

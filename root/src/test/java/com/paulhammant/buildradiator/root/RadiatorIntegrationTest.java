@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import static com.paulhammant.buildradiator.root.BuildRadiatorRoot.DEMO_RADIATOR_CODE;
 import static com.paulhammant.buildradiator.root.BuildRadiatorRoot.NO_UPDATES;
+import static com.paulhammant.buildradiator.root.TestVersionOfBuildRadiatorApp.CONTRIVED_FOR_TESTING;
 import static com.paulhammant.buildradiator.root.hamcrest.HasNewRadiator.captureCreatedRadiator;
 import static com.paulhammant.buildradiator.root.hamcrest.IgnoringLastUpdatedFieldTheRadiatorIsTheSameAs.ignoringLastUpdatedFieldTheRadiatorIsTheSameAs;
 import static com.paulhammant.buildradiator.root.model.TestRadBuilder.*;
@@ -43,7 +44,7 @@ public class RadiatorIntegrationTest {
         app = new TestVersionOfBuildRadiatorApp(rad);
         startApp();
 
-        get("/r/RAD_CODE" )
+        get("/r" + CONTRIVED_FOR_TESTING + "/RAD_CODE" )
                 .then()
                 .assertThat()
                 .body(ignoringLastUpdatedFieldTheRadiatorIsTheSameAs(rad.withoutSecret()))
@@ -61,7 +62,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("stepNames", join(",", "P_P", "Q q", "R-R"))
             .when()
-                .post("/r/create")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/create")
             .then()
                 .statusCode(200)
                 .body(captureCreatedRadiator(createdRadiator));
@@ -82,7 +83,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("stepNames", join(",", "short1", "short 2", "1234567890123456789012"))
             .when()
-                .post("/r/create")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/create")
             .then()
                 .statusCode(200)
                 .body(equalTo("a stepName parameter too long"));
@@ -98,7 +99,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("stepNames", join(",", "short1", "short 2", "short 333"))
             .when()
-                .post("/r/create")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/create")
             .then()
                 .statusCode(200)
                 .body(captureCreatedRadiator(createdRadiator));
@@ -144,7 +145,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params( "ips", "111.111.111.111", "secret", "sseeccrreett")
             .when()
-                .post("/r/aaa/updateIps")
+                .post("/r"  + CONTRIVED_FOR_TESTING +"/aaa/updateIps")
             .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
@@ -209,7 +210,7 @@ public class RadiatorIntegrationTest {
             given()
                     .params("build", "1", "step", "Compile", "secret", NO_UPDATES)
                 .when()
-                    .post("/r/" + DEMO_RADIATOR_CODE + "/" + barredOperation)
+                    .post("/r" + CONTRIVED_FOR_TESTING + "/" + DEMO_RADIATOR_CODE + "/" + barredOperation)
                 .then()
                     .statusCode(200)
                     .body(equalTo("secret doesnt match")); // in lieu of specific method
@@ -229,7 +230,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("build", "1", "step", "A", "secret", "sseeccrreett")
             .when()
-                .post("/r/aaa/buildCancelled")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/aaa/buildCancelled")
             .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
@@ -255,7 +256,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("build", "1", "step", "A", "secret", "sseeccrreett")
             .when()
-                .post("/r/aaa/stepPassed")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/aaa/stepPassed")
             .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
@@ -278,7 +279,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("build", "1", "step", "A", "secret", "sseeccrreett")
             .when()
-                .post("/r/aaa/stepFailed")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/aaa/stepFailed")
             .then()
                 .statusCode(200)
                 .body(equalTo("OK"));
@@ -325,7 +326,7 @@ public class RadiatorIntegrationTest {
         startApp();
 
         when()
-                .get("/r/wewwewwewe/")
+                .get("/r" + CONTRIVED_FOR_TESTING + "/wewwewwewe/")
             .then()
                 .assertThat()
                 .body(equalTo(("{\"message\":\"nothing here\",\"egressIpAddress\":\"127.0.0.1\"}")))
@@ -340,7 +341,7 @@ public class RadiatorIntegrationTest {
         startApp();
 
         when()
-                .get("/r/")
+                .get("/r" + CONTRIVED_FOR_TESTING + "/")
             .then()
                 .assertThat()
                 .body(containsString("<title>Build Radiator</title>"))
@@ -355,7 +356,7 @@ public class RadiatorIntegrationTest {
         startApp();
 
         when()
-                .get("/r/12345678901234567890123")
+                .get("/r" + CONTRIVED_FOR_TESTING + "/12345678901234567890123")
             .then()
                 .assertThat()
                 .body(equalTo("\"radiatorCode parameter too long\""))
@@ -384,7 +385,7 @@ public class RadiatorIntegrationTest {
         given()
                 .params("build", buildId, "step", stepName, "secret", secret)
             .when()
-                .post("/r/" + radCode + "/startStep")
+                .post("/r" + CONTRIVED_FOR_TESTING + "/" + radCode + "/startStep")
             .then()
                 .statusCode(expectedStatusCode)
                 .body(equalTo(expectedBody));

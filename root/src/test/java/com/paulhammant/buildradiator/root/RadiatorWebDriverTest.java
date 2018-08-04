@@ -6,6 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 
+import static com.paulhammant.buildradiator.root.TestVersionOfBuildRadiatorApp.CONTRIVED_FOR_TESTING;
 import static com.paulhammant.buildradiator.root.model.TestRadBuilder.*;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -51,7 +52,8 @@ public class RadiatorWebDriverTest {
     }
 
     @After
-    public void stopServer() {
+    public void stopServer() throws InterruptedException {
+        //Thread.sleep(1000000);
         app.stop();
         app = null;
     }
@@ -66,7 +68,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nA\n2 secs\n(running) B\n0 secs\nC\n0 secs");
@@ -80,7 +82,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build/");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/");
 
         FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.url().shouldMatch(endsWith("Trunk_Build/")); // unchanged
@@ -97,7 +99,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build/A/Ant/B/Bat/C/Clever_Cat");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/A/Ant/B/Bat/C/Clever_Cat");
 
         FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nAnt\n2 secs\n(running) Bat\n0 secs\nClever Cat\n0 secs");
@@ -109,7 +111,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(null);
 
-        startAppAndOpenWebDriverOnRadiatorPage("missing_radiator_code", "Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#missing_radiator_code/Main_Project_Trunk_Build");
 
         //Thread.sleep(10000000);
         FWD.div().getText().shouldBe("Radiator code missing_radiator_code not recognized.\n\n" +
@@ -119,7 +121,7 @@ public class RadiatorWebDriverTest {
     }
 
     @Test
-    public void confirmDataRefreshes() throws InterruptedException {
+    public void confirmDataRefreshes() {
 
         Radiator rad = rad("xxx", "sseeccrreett", stepNames("A"),
                 build("1", "running", 0, step("A", 0, "running")));
@@ -128,11 +130,11 @@ public class RadiatorWebDriverTest {
             @Override
             protected void serveRadiatorPage() {
                 // speed up refresh interval - hack radiator.html as it is send to the browser
-                super.serveIndexPageButWithReplacements("30000", "300", "\n</div>", "\n<pre>{{ rad | json }}</pre>\n</div>");
+                super.serveIndexPageButWithReplacements("30000", "300", "\n</div>", "\n<pre>{{ rad | json }}</pre>\n<pre>{{ code }} {{ title }}</pre>\n</div>");
             }
         };
 
-        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         FWD.trs().get(1).getText().shouldContain("(running)");
         rad.stepPassed("1", "A");
@@ -149,7 +151,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         StringBuilder percentages = new StringBuilder();
         FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));
@@ -166,7 +168,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage("xxx", "Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage("/r" + CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         StringBuilder percentages = new StringBuilder();
         FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));
@@ -178,7 +180,7 @@ public class RadiatorWebDriverTest {
         percentages.append(split.length > 1 ? split[1].trim() : "");
     }
 
-    private void startAppAndOpenWebDriverOnRadiatorPage(String code, String title) {
+    private void startAppAndOpenWebDriverOnRadiatorPage(String path) {
         app.start("server.join=false");
         while (!app.appStarted) {
             try {
@@ -186,7 +188,7 @@ public class RadiatorWebDriverTest {
             } catch (InterruptedException e) {
             }
         }
-        DRIVER.get(domain + "/r#" + code + "/" + title);
+        DRIVER.get(domain + path);
     }
 
 

@@ -8,8 +8,15 @@ import java.nio.file.Paths;
 
 public class TestVersionOfBuildRadiatorApp extends BuildRadiatorRoot {
 
+    public static final String CONTRIVED_FOR_TESTING = "/contrived/for/testing";
+
     {
         use(new BuildRadiatorStaticResources());
+    }
+
+    @Override
+    public String getBasePath() {
+        return super.getBasePath() + CONTRIVED_FOR_TESTING;
     }
 
     protected boolean appStarted;
@@ -31,7 +38,7 @@ public class TestVersionOfBuildRadiatorApp extends BuildRadiatorRoot {
     protected void serveIndexPageButWithReplacements(String... replacements) {
 
         path("", () -> {
-            get("/r/", (request, response) -> {
+            get(getBasePath() + "/", (request, response) -> {
                 String orig = new String(Files.readAllBytes(Paths.get("src/main/resources/root/radiator.html")));
                 for (int i = 0; i < replacements.length; i = i +2) {
                     String from = replacements[i];

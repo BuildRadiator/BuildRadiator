@@ -97,7 +97,8 @@
                 fetchData: function () {
                     var xhr = new XMLHttpRequest();
                     var self = this;
-                    xhr.open('GET', "/r/" + self.code);
+                    console.log("l=" + location.pathname + "/" + self.code)
+                    xhr.open('GET', location.pathname + "/" + self.code);
                     xhr.setRequestHeader("lastUpdated", self.rad.lastUpdated);
                     xhr.onload = function () {
                         if (xhr.status === 200) {
