@@ -28,7 +28,7 @@
 
     <modules>
         <module>google-datastore-hack</module>
-        <module>root</module>
+        <module>radiator</module>
         <module>main</module>
         <module>editor</module>
         <module>static-resources</module>
