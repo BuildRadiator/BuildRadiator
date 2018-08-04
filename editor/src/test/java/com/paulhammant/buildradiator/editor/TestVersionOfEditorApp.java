@@ -4,8 +4,16 @@ import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResource
 
 public class TestVersionOfEditorApp extends BuildRadiatorEditor {
 
+    public static final String CONTRIVED_FOR_TESTING = "contrived/for/testing/";
+
     {
         use(new BuildRadiatorStaticResources());
+    }
+
+
+    @Override
+    public String getBasePath() {
+        return super.getBasePath() + CONTRIVED_FOR_TESTING;
     }
 
     protected boolean appStarted;

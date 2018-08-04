@@ -10,6 +10,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 import org.seleniumhq.selenium.fluent.FluentWebElements;
 
+import static com.paulhammant.buildradiator.editor.TestVersionOfEditorApp.CONTRIVED_FOR_TESTING;
 import static org.junit.Assert.assertEquals;
 
 public class EditorWebDriverTest {
@@ -59,7 +60,7 @@ public class EditorWebDriverTest {
     @Test
     public void editorDisplayRemovesUnderScoresFromContrivedTitle() {
         app = new TestVersionOfEditorApp();
-        startAppAndOpenWebDriverOnEditorPage("abcde12345/a_contrived_title/0/a_a/1/b_b/2/c_c");
+        startAppAndOpenWebDriverOnEditorPage(CONTRIVED_FOR_TESTING + "#abcde12345/a_contrived_title/0/a_a/1/b_b/2/c_c");
         FWD.div().getText().shouldContain("a contrived title");
         FluentWebElements lis = FWD.lis();
         lis.get(0).getText().shouldContain("0:");
@@ -76,7 +77,7 @@ public class EditorWebDriverTest {
             get("/r", () -> "<html><body>OK</body></html>");
         }};
 
-        startAppAndOpenWebDriverOnEditorPage("ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
+        startAppAndOpenWebDriverOnEditorPage(CONTRIVED_FOR_TESTING + "#ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
         FWD.input().clearField().sendKeys("T I T L E");
         FWD.li().input().clearField().sendKeys("new STEP desc");
         FWD.button().click();
@@ -92,7 +93,7 @@ public class EditorWebDriverTest {
             } catch (InterruptedException e) {
             }
         }
-        DRIVER.get(domain + "/#" + path);
+        DRIVER.get(domain + "/" + path);
     }
 
 
