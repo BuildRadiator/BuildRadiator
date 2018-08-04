@@ -89,7 +89,7 @@ public class RadiatorApp extends Jooby {
     }
 
     public String getBasePath() {
-        return "/r";
+        return "";
     }
 
     protected void serveRadiatorPage() {

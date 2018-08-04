@@ -5,13 +5,11 @@ import com.paulhammant.buildradiator.radiator.RadiatorApp;
 import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResources;
 import org.jooby.Jooby;
 
-import static org.jooby.Jooby.run;
-
 public class BuildRadiatorMain extends Jooby {
 
     public BuildRadiatorMain() {
         use("/editor/", new EditorApp());
-        use("/", new RadiatorApp());
+        use("/r/", new RadiatorApp());
         use(new BuildRadiatorStaticResources());
     }
 
