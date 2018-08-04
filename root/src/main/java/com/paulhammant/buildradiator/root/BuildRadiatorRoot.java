@@ -49,12 +49,6 @@ public class BuildRadiatorRoot extends Jooby {
 
         });
 
-        get("/_ah/health", () -> {
-            return "yup, am healthy, Google App Engine";
-        });
-        // Routes /_ah/start and /_ah/stop - not enabled on Flex containers
-
-        assets("/", "root/index.html");
         serveRadiatorPage();
 
         err(RadiatorDoesntExist.class, (req, rsp, err) -> {
