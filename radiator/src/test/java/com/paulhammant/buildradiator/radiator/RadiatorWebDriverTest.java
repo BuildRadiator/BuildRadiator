@@ -6,7 +6,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 
-import static com.paulhammant.buildradiator.radiator.TestVersionOfBuildRadiatorApp.CONTRIVED_FOR_TESTING;
+import static com.paulhammant.buildradiator.radiator.TestVersionOfBuildRadiatorApp.CONTRIVED_PATH_FOR_TESTING;
 import static com.paulhammant.buildradiator.radiator.model.TestRadBuilder.*;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -68,7 +68,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nA\n2 secs\n(running) B\n0 secs\nC\n0 secs");
@@ -82,7 +82,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/");
 
         FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.url().shouldMatch(endsWith("Trunk_Build/")); // unchanged
@@ -99,7 +99,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/A/Ant/B/Bat/C/Clever_Cat");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/A/Ant/B/Bat/C/Clever_Cat");
 
         FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nAnt\n2 secs\n(running) Bat\n0 secs\nClever Cat\n0 secs");
@@ -111,7 +111,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(null);
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#missing_radiator_code/Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#missing_radiator_code/Main_Project_Trunk_Build");
 
         //Thread.sleep(10000000);
         FWD.div().getText().shouldBe("Radiator code missing_radiator_code not recognized.\n\n" +
@@ -134,7 +134,7 @@ public class RadiatorWebDriverTest {
             }
         };
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         FWD.trs().get(1).getText().shouldContain("(running)");
         rad.stepPassed("1", "A");
@@ -151,7 +151,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         StringBuilder percentages = new StringBuilder();
         FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));
@@ -168,7 +168,7 @@ public class RadiatorWebDriverTest {
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
-        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
+        startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         StringBuilder percentages = new StringBuilder();
         FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));

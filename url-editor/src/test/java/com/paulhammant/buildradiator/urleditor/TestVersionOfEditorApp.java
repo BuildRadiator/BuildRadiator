@@ -4,7 +4,7 @@ import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResource
 
 public class TestVersionOfEditorApp extends UrlEditorApp {
 
-    public static final String CONTRIVED_FOR_TESTING = "contrived/for/testing/";
+    public static final String CONTRIVED_PATH_FOR_TESTING = "contrived/for/testing/";
 
     {
         use(new BuildRadiatorStaticResources());
@@ -13,7 +13,7 @@ public class TestVersionOfEditorApp extends UrlEditorApp {
 
     @Override
     public String getBasePath() {
-        return super.getBasePath() + CONTRIVED_FOR_TESTING;
+        return super.getBasePath() + CONTRIVED_PATH_FOR_TESTING;
     }
 
     protected boolean appStarted;

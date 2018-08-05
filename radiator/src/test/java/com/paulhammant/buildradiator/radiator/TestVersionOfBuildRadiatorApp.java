@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 
 public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
 
-    public static final String CONTRIVED_FOR_TESTING = "/contrived/for/testing";
+    public static final String CONTRIVED_PATH_FOR_TESTING = "/contrived/for/testing";
 
     {
         use(new BuildRadiatorStaticResources());
@@ -16,7 +16,7 @@ public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
 
     @Override
     public String getBasePath() {
-        return super.getBasePath() + CONTRIVED_FOR_TESTING;
+        return super.getBasePath() + CONTRIVED_PATH_FOR_TESTING;
     }
 
     protected boolean appStarted;
