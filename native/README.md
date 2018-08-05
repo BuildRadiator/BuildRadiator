@@ -1,0 +1,1 @@
+Node.js native-vue (capacitor) build here, that pulls in .vue files relatively.
