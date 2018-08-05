@@ -94,6 +94,9 @@
 					}
 				    return rep
                 },
+                goToEditor: function () {
+				    location.href = location.href.replace("/r", "/url-editor");
+                },
                 fetchData: function () {
                     var xhr = new XMLHttpRequest();
                     var self = this;
@@ -161,6 +164,8 @@
 			<tr style="width: 100%; line-height: 70%">
 				<td style="text-align: center; font-size: 300%" colspan="50">{{title}}<br/>
 					<a style="font-size: 20%" href="//github.com/BuildRadiator/BuildRadiator/wiki/Setting-the-title-and-expanding-step-codes-in-the-UI">change URL to customize the title ↑ or step codes ↓</a>
+					<button style="font-size: 20%" v-on:click="goToEditor">Edit the title and step descriptions</button>
+
 				</td>
 			</tr>
 			<tr style="width: 100%" v-for="build in rad.builds">
