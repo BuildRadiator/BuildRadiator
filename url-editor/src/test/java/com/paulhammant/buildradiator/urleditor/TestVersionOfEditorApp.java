@@ -1,8 +1,8 @@
-package com.paulhammant.buildradiator.editor;
+package com.paulhammant.buildradiator.urleditor;
 
 import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResources;
 
-public class TestVersionOfEditorApp extends EditorApp {
+public class TestVersionOfEditorApp extends UrlEditorApp {
 
     public static final String CONTRIVED_FOR_TESTING = "contrived/for/testing/";
 

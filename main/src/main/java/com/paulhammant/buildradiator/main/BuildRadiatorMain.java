@@ -1,6 +1,6 @@
 package com.paulhammant.buildradiator.main;
 
-import com.paulhammant.buildradiator.editor.EditorApp;
+import com.paulhammant.buildradiator.urleditor.UrlEditorApp;
 import com.paulhammant.buildradiator.radiator.RadiatorApp;
 import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResources;
 import org.jooby.Jooby;
@@ -8,7 +8,7 @@ import org.jooby.Jooby;
 public class BuildRadiatorMain extends Jooby {
 
     public BuildRadiatorMain() {
-        use("/editor/", new EditorApp());
+        use("/url-editor/", new UrlEditorApp());
         use("/r/", new RadiatorApp());
         use(new BuildRadiatorStaticResources());
     }

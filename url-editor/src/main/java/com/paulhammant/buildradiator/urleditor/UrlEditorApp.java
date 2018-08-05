@@ -1,12 +1,12 @@
-package com.paulhammant.buildradiator.editor;
+package com.paulhammant.buildradiator.urleditor;
 
 import org.jooby.Jooby;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
-public class EditorApp extends Jooby {
+public class UrlEditorApp extends Jooby {
 
     {
-        assets(getBasePath(), "editor/index.html");
+        assets(getBasePath(), "url-editor/index.html");
         err(404, (req, rsp, err) -> {
             System.out.println(req.route() + " page missing from " + req.ip());
             rsp.status(404);

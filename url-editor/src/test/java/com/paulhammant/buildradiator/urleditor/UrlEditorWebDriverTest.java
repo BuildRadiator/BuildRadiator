@@ -1,4 +1,4 @@
-package com.paulhammant.buildradiator.editor;
+package com.paulhammant.buildradiator.urleditor;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -10,10 +10,10 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 import org.seleniumhq.selenium.fluent.FluentWebElements;
 
-import static com.paulhammant.buildradiator.editor.TestVersionOfEditorApp.CONTRIVED_FOR_TESTING;
+import static com.paulhammant.buildradiator.urleditor.TestVersionOfEditorApp.CONTRIVED_FOR_TESTING;
 import static org.junit.Assert.assertEquals;
 
-public class EditorWebDriverTest {
+public class UrlEditorWebDriverTest {
 
     private static ChromeDriver DRIVER;
     private static FluentWebDriver FWD;

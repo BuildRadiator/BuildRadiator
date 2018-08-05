@@ -30,7 +30,7 @@
         <module>google-datastore-hack</module>
         <module>radiator</module>
         <module>main</module>
-        <module>editor</module>
+        <module>url-editor</module>
         <module>static-resources</module>
     </modules>
 
