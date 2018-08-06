@@ -52,7 +52,7 @@ public class UrlEditorWebDriverTest {
     }
 
     @After
-    public void stopServer() {
+    public void stopServer() throws InterruptedException {
         app.stop();
         app = null;
     }
