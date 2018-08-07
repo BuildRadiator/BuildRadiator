@@ -6,6 +6,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static com.paulhammant.buildradiator.radiator.TestVersionOfBuildRadiatorApp.CONTRIVED_PATH_FOR_TESTING;
 import static com.paulhammant.buildradiator.radiator.model.TestRadBuilder.*;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -113,7 +116,6 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#missing_radiator_code/Main_Project_Trunk_Build");
 
-        //Thread.sleep(10000000);
         FWD.div().getText().shouldBe("Radiator code missing_radiator_code not recognized.\n\n" +
                 "Did you type it correctly?\n\n" +
                 "Maybe the radiator DOES exist but this egress\n" +
@@ -129,8 +131,36 @@ public class RadiatorWebDriverTest {
         app = new TestVersionOfBuildRadiatorApp(rad) {
             @Override
             protected void serveRadiatorPage() {
+
                 // speed up refresh interval - hack radiator.html as it is send to the browser
-                super.serveIndexPageButWithReplacements("30000", "300");
+
+                get(getBasePath() + "/", (request, response) -> {
+                    response.type("text/html");
+                    response.send("<!DOCTYPE html>\n" +
+                            "<html>\n" +
+                            "<head>\n" +
+                            "\t<script type=\"text/javascript\" src=\"/vue.js\"></script>\n" +
+                            "\t<script type=\"text/javascript\" src=\"/moment.min.js\"></script>\n" +
+                            "\t<script type=\"text/javascript\" src=\"/moment-duration-format.js\"></script>\n" +
+                            "\t<script src=\"https://unpkg.com/http-vue-loader\"></script>\n" +
+                            "\t<title>Build Radiator Editor</title>\n" +
+                            "</head>\n" +
+                            "<body style=\"height: 100%\">\n" +
+                            "<div id=\"my-app\">\n" +
+                            "\t<radiator refresh-rate=\"300\"></radiator>\n" +
+                            "</div>\n" +
+                            "<script type=\"text/javascript\">\n" +
+                            "    new Vue({\n" +
+                            "        el: '#my-app',\n" +
+                            "        components: {\n" +
+                            "            'radiator': httpVueLoader('testing/radiator.vue')\n" +
+                            "        }\n" +
+                            "    });\n" +
+                            "</script>\n" +
+                            "</body>\n" +
+                            "</html>");
+                });
+
             }
         };
 

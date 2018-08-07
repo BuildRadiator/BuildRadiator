@@ -37,6 +37,10 @@ public class RadiatorApp extends Jooby {
             }
         });
 
+        serveRadiatorPage();
+
+        assets (getBasePath() + "/" + "radiator.vue", "radiator/radiator.vue");
+
         path(getBasePath(), () -> {
             // used by radiator.html
             get("/:radiatorCode/", this::getRadiatorByCode);
@@ -48,8 +52,6 @@ public class RadiatorApp extends Jooby {
             post("/create", this::createRadiator);
 
         });
-
-        serveRadiatorPage();
 
         err(RadiatorDoesntExist.class, (req, rsp, err) -> {
             rsp.status(200);

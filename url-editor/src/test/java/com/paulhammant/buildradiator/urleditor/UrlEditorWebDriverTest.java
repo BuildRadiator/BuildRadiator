@@ -53,6 +53,7 @@ public class UrlEditorWebDriverTest {
 
     @After
     public void stopServer() throws InterruptedException {
+        //Thread.sleep(1000000);
         app.stop();
         app = null;
     }
