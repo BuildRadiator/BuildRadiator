@@ -1,11 +1,17 @@
 package com.paulhammant.buildradiator.radiator;
 
+import com.google.common.io.CharStreams;
 import com.paulhammant.buildradiator.radiator.model.Radiator;
+import org.jooby.Route;
 import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -135,32 +141,30 @@ public class RadiatorWebDriverTest {
                 // speed up refresh interval - hack radiator.html as it is send to the browser
 
                 get(getBasePath() + "/", (request, response) -> {
+                    String page = getStringFromResource("radiator/radiator.html");
+                    page = page.replace("vue.min.js", "vue.js");
+                    page = page.replace("30000", "300");
                     response.type("text/html");
-                    response.send("<!DOCTYPE html>\n" +
-                            "<html>\n" +
-                            "<head>\n" +
-                            "\t<script type=\"text/javascript\" src=\"/vue.js\"></script>\n" +
-                            "\t<script type=\"text/javascript\" src=\"/moment.min.js\"></script>\n" +
-                            "\t<script type=\"text/javascript\" src=\"/moment-duration-format.js\"></script>\n" +
-                            "\t<script src=\"https://unpkg.com/http-vue-loader\"></script>\n" +
-                            "\t<title>Build Radiator Editor</title>\n" +
-                            "</head>\n" +
-                            "<body style=\"height: 100%\">\n" +
-                            "<div id=\"my-app\">\n" +
-                            "\t<radiator refresh-rate=\"300\"></radiator>\n" +
-                            "</div>\n" +
-                            "<script type=\"text/javascript\">\n" +
-                            "    new Vue({\n" +
-                            "        el: '#my-app',\n" +
-                            "        components: {\n" +
-                            "            'radiator': httpVueLoader('testing/radiator.vue')\n" +
-                            "        }\n" +
-                            "    });\n" +
-                            "</script>\n" +
-                            "</body>\n" +
-                            "</html>");
+                    response.send(page);
                 });
 
+            }
+
+            private String getStringFromResource(String file) throws IOException {
+                file = Route.normalize(file);
+                InputStream stream = getClass().getResourceAsStream(file);
+                return CharStreams.toString(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            }
+
+            @Override
+            protected void serveRadiatorComponent() {
+                get(getBasePath() + "/" + "radiator.vue", (request, response) -> {
+                    String page = getStringFromResource("radiator/radiator.vue");
+                    page = page.replace("</div>\n</template>", "<h2>For Testing:</h2><pre>{{ rad | pretty }}</pre>\n</div>\n</template>");
+                    page = page.replace("id=\"radiator\" style=\"", "id=\"radiator\" style=\"border: 1px solid red; ");
+                    response.type("text/vue");
+                    response.send(page);
+                });
             }
         };
 

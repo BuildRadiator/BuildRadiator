@@ -38,8 +38,7 @@ public class RadiatorApp extends Jooby {
         });
 
         serveRadiatorPage();
-
-        assets (getBasePath() + "/" + "radiator.vue", "radiator/radiator.vue");
+        serveRadiatorComponent();
 
         path(getBasePath(), () -> {
             // used by radiator.html
@@ -96,9 +95,10 @@ public class RadiatorApp extends Jooby {
 
     protected void serveRadiatorPage() {
         assets (getBasePath() + "/", "radiator/radiator.html");
-        // From https://gist.github.com/tildebyte/c85f65c1e474a6c4a6188755e710979b for LetsEncrypt
-        //    assets("/well-known/acme-challenge/xxx", "well-known/acme-challenge/xxx");
-        //    assets("/.well-known/acme-challenge/xxx", "well-known/acme-challenge/xxx");
+    }
+
+    protected void serveRadiatorComponent() {
+        assets (getBasePath() + "/" + "radiator.vue", "radiator/radiator.vue");
     }
 
     protected void getRadiatorByCode(Request req, Response rsp) throws Throwable {
