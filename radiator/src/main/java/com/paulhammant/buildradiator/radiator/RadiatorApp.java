@@ -12,6 +12,8 @@ public class RadiatorApp extends Jooby {
 
     public static final String DEMO_RADIATOR_CODE = "ueeusvcipmtsb755uq";
     public static final String NO_UPDATES = "NO-UPDATES";
+    public static final String HTML_PAGE = "radiator/radiator.html";
+    public static final String VUE_COMPONENT = "radiator/radiator.vue";
 
     protected final RadiatorStore radiatorStore;
 
@@ -94,11 +96,11 @@ public class RadiatorApp extends Jooby {
     }
 
     protected void serveRadiatorPage() {
-        assets (getBasePath() + "/", "radiator/radiator.html");
+        assets (getBasePath() + "/", HTML_PAGE);
     }
 
     protected void serveRadiatorComponent() {
-        assets (getBasePath() + "/" + "radiator.vue", "radiator/radiator.vue");
+        assets (getBasePath() + "/" + "radiator.vue", VUE_COMPONENT);
     }
 
     protected void getRadiatorByCode(Request req, Response rsp) throws Throwable {

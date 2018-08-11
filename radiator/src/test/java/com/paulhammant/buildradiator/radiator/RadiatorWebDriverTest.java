@@ -7,6 +7,7 @@ import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
+import org.seleniumhq.selenium.fluent.TestableString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -122,10 +123,11 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#missing_radiator_code/Main_Project_Trunk_Build");
 
-        FWD.div().getText().shouldBe("Radiator code missing_radiator_code not recognized.\n\n" +
-                "Did you type it correctly?\n\n" +
-                "Maybe the radiator DOES exist but this egress\n" +
-                "TCP/IP address (127.0.0.1) is not allowed.");
+        TestableString text = FWD.div().getText();
+        text.shouldContain("Radiator code missing_radiator_code not recognized");
+        text.shouldContain("Did you type it correctly?");
+        text.shouldContain("Maybe the radiator DOES exist but this egress");
+        text.shouldContain("TCP/IP address (127.0.0.1) is not allowed");
     }
 
     @Test
@@ -134,39 +136,7 @@ public class RadiatorWebDriverTest {
         Radiator rad = rad("xxx", "sseeccrreett", stepNames("A"),
                 build("1", "running", 0, step("A", 0, "running")));
 
-        app = new TestVersionOfBuildRadiatorApp(rad) {
-            @Override
-            protected void serveRadiatorPage() {
-
-                // speed up refresh interval - hack radiator.html as it is send to the browser
-
-                get(getBasePath() + "/", (request, response) -> {
-                    String page = getStringFromResource("radiator/radiator.html");
-                    page = page.replace("vue.min.js", "vue.js");
-                    page = page.replace("30000", "300");
-                    response.type("text/html");
-                    response.send(page);
-                });
-
-            }
-
-            private String getStringFromResource(String file) throws IOException {
-                file = Route.normalize(file);
-                InputStream stream = getClass().getResourceAsStream(file);
-                return CharStreams.toString(new InputStreamReader(stream, StandardCharsets.UTF_8));
-            }
-
-            @Override
-            protected void serveRadiatorComponent() {
-                get(getBasePath() + "/" + "radiator.vue", (request, response) -> {
-                    String page = getStringFromResource("radiator/radiator.vue");
-                    page = page.replace("</div>\n</template>", "<h2>For Testing:</h2><pre>{{ rad | pretty }}</pre>\n</div>\n</template>");
-                    page = page.replace("id=\"radiator\" style=\"", "id=\"radiator\" style=\"border: 1px solid red; ");
-                    response.type("text/vue");
-                    response.send(page);
-                });
-            }
-        };
+        app = new TestVersionOfBuildRadiatorApp(rad).withFasterRefresh();
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
