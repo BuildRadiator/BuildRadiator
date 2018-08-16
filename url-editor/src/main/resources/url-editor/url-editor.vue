@@ -20,7 +20,7 @@
 
         <pre>
             <code>
-                {{locn | pretty}}
+                {{ locn }}
             </code>
         </pre>
     </div>

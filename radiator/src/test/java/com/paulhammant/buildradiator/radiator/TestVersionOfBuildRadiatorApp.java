@@ -66,7 +66,7 @@ public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
     protected void serveRadiatorComponent() {
         get(getBasePath() + "/" + "radiator.vue", (request, response) -> {
             String page = getStringFromResource(VUE_COMPONENT);
-            page = page.replace("</div>\n</template>", "<h2>For Testing:</h2><pre>{{ rad | pretty }}</pre>\n</div>\n</template>");
+            page = page.replace("</div>\n</template>", "<h2>For Testing:</h2><pre>{{ rad }}</pre>\n</div>\n</template>");
             page = page.replace("id=\"radiator\" style=\"", "id=\"radiator\" style=\"border: 1px solid red; ");
             response.type("text/vue");
             response.send(page);
