@@ -59,6 +59,7 @@ public class RadiatorWebDriverTest {
         // I sure hope those people don't let the domain go, or remap it
         // it is a decent way to ensure nothing is shared between tests (mostly)
         domain = "http://t" + testNum++ + ".devd.io:8080";
+        //domain = "http://localhost:8080";
     }
 
     @After
