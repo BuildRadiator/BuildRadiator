@@ -79,6 +79,7 @@
       <artifactId>jooby</artifactId>
       <classifier>tests</classifier>
     </dependency>
+
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>fluent-hc</artifactId>
@@ -107,7 +108,7 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>3.13.0</version>
+      <version>3.141.59</version>
       <scope>test</scope>
     </dependency>
 
