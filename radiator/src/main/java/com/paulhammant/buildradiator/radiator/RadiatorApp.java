@@ -17,6 +17,10 @@ public class RadiatorApp extends Jooby {
 
     protected final RadiatorStore radiatorStore;
 
+    public static void main(final String[] args) {
+        Jooby.run(RadiatorApp::new, args);
+    }
+
     {
 
         String gae_appId = System.getenv("GCLOUD_PROJECT");
