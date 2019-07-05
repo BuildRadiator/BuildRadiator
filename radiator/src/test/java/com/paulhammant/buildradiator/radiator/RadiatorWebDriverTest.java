@@ -7,6 +7,7 @@ import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.seleniumhq.selenium.fluent.FluentWebDriver;
+import org.seleniumhq.selenium.fluent.FluentWebElement;
 import org.seleniumhq.selenium.fluent.TestableString;
 
 import java.io.IOException;
@@ -81,7 +82,7 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
-        FWD.td().getText().shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
+        FWD.td().getText().within(secs(1)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nA\n2 secs\n(running) B\n0 secs\nC\n0 secs");
         FWD.trs().get(2).getText().shouldBe("1\n4 secs\nA\n4 secs\n(failed) B\n0 secs\n(skipped) C\n0 secs\n(skipped)");
     }
@@ -141,14 +142,16 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
-        FWD.trs().get(1).getText().shouldContain("(running)");
+        final FluentWebElement rootDiv = FWD.within(secs(2)).div();
+        rootDiv.getText().shouldContain("(running)");
         rad.stepPassed("1", "A");
         FWD.trs().get(1).getText().within(secs(4)).shouldContain("(passed)");
+        rootDiv.getText().shouldNotContain("(running)");
 
     }
 
     @Test
-    public void columnsShouldBeProportional()  {
+    public void columnsShouldBeProportional() {
 
         Radiator rad = rad("xxx", "sseeccrreett", stepNames("A", "B"),
                 build("1", "passed", 30000, step("A", 8000, "passed"), step("B", 32000, "passed")),
@@ -159,6 +162,7 @@ public class RadiatorWebDriverTest {
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         StringBuilder percentages = new StringBuilder();
+        FWD.body().within(secs(3)).getText().shouldContain("Main");
         FWD.tds().each((fluentWebElement, i) -> rhs(fluentWebElement.getAttribute("style").toString().split("width:"), percentages));
         assertThat(percentages.toString(), equalTo("8%;23%;69%;8%;23%;69%;"));
 
