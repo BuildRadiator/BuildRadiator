@@ -68,11 +68,11 @@ public class RadiatorApp extends Jooby {
             rsp.send(err.getCause().getMessage());
         });
 
-        err(Err.Missing.class, (req, rsp, err) -> {
-            rsp.status(200);
-            String message = err.getMessage();
-            rsp.send(message.substring(message.indexOf(":")+2));
-        });
+//        err(Err.Missing.class, (req, rsp, err) -> {
+//            rsp.status(200);
+//            String message = err.getMessage();
+//            rsp.send(message.substring(message.indexOf(":")+2));
+//        });
 
         err((req, rsp, err) -> {
             rsp.status(200);
