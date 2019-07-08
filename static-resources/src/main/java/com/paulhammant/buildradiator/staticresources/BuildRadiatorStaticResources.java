@@ -1,15 +1,13 @@
 package com.paulhammant.buildradiator.staticresources;
 
-import org.jooby.Jooby;
+import io.jooby.Jooby;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class BuildRadiatorStaticResources extends Jooby {
 
     {
 
-        get("/_ah/health", () -> {
-            return "yup, am healthy, Google App Engine";
-        });
+        get("/_ah/health", ctx ->  "yup, am healthy, Google App Engine");
         // Routes /_ah/start and /_ah/stop - not enabled on Flex containers
 
         assets("/br.png", "br.png");

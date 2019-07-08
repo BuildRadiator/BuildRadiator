@@ -3,7 +3,7 @@ package com.paulhammant.buildradiator.main;
 import com.paulhammant.buildradiator.urleditor.UrlEditorApp;
 import com.paulhammant.buildradiator.radiator.RadiatorApp;
 import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResources;
-import org.jooby.Jooby;
+import io.jooby.Jooby;
 
 public class BuildRadiatorMain extends Jooby {
 
@@ -14,9 +14,7 @@ public class BuildRadiatorMain extends Jooby {
     }
 
     public static void main(final String[] args) {
-        Jooby.run(BuildRadiatorMain::new, args);
+        runApp(args, BuildRadiatorMain::new);
     }
-
-
 
 }

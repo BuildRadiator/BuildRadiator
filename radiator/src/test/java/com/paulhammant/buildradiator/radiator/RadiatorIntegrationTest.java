@@ -4,6 +4,7 @@ import com.paulhammant.buildradiator.radiator.model.Build;
 import com.paulhammant.buildradiator.radiator.model.CreatedRadiator;
 import com.paulhammant.buildradiator.radiator.model.Radiator;
 import com.paulhammant.buildradiator.radiator.model.Step;
+import io.jooby.Server;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +22,14 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static java.lang.String.join;
 import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.fail;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 public class RadiatorIntegrationTest {
 
-    private TestVersionOfBuildRadiatorApp app;
+    TestVersionOfBuildRadiatorApp app;
+    private Server stoppable;
+
 
     @Before
     public void setup() {
@@ -35,7 +37,7 @@ public class RadiatorIntegrationTest {
     }
 
     @Test
-    public void knownCodeHasListOfBuildsAvailableAsJson() throws InterruptedException {
+    public void knownCodeHasListOfBuildsAvailableAsJson() {
 
         Radiator rad = rad("RAD_CODE", "a_secret", stepNames("A", "B", "C"),
                 build("1", "running", 0, step("A", 0, "running"), step("B"), step("C")))
@@ -326,12 +328,12 @@ public class RadiatorIntegrationTest {
         startApp();
 
         when()
-                .get(CONTRIVED_PATH_FOR_TESTING + "/wewwewwewe/")
+                .get(CONTRIVED_PATH_FOR_TESTING + "/wewwewwewe")
             .then()
                 .assertThat()
                 .body(equalTo(("{\"message\":\"nothing here\",\"egressIpAddress\":\"127.0.0.1\"}")))
                 .statusCode(200)
-                .contentType("application/json;charset=UTF-8");
+                .contentType("application/json");
     }
 
     @Test
@@ -341,12 +343,12 @@ public class RadiatorIntegrationTest {
         startApp();
 
         when()
-                .get(CONTRIVED_PATH_FOR_TESTING + "/")
+                .get(CONTRIVED_PATH_FOR_TESTING)
             .then()
                 .assertThat()
                 .body(containsString("<title>Build Radiator</title>"))
                 .statusCode(200)
-                .contentType("text/html;charset=UTF-8");
+                .contentType("text/html");
     }
 
     @Test
@@ -359,14 +361,13 @@ public class RadiatorIntegrationTest {
                 .get(CONTRIVED_PATH_FOR_TESTING + "/12345678901234567890123")
             .then()
                 .assertThat()
-                .body(equalTo("\"radiatorCode parameter too long\""))
+                .body(equalTo("radiatorCode parameter too long"))
                 .statusCode(200)
-                .contentType("application/json;charset=UTF-8");
+                .contentType("text/plain");
     }
 
-
     private void startApp() {
-        app.start("server.join=false");
+        stoppable = app.start();
         while (!app.appStarted) {
             try {
                 Thread.sleep(15);
@@ -376,8 +377,11 @@ public class RadiatorIntegrationTest {
     }
 
     @After
-    public void stopServer() {
-        app.stop();
+    public void stopServer() throws InterruptedException {
+        stoppable.stop();
+        while (!app.appStopped) {
+            Thread.sleep(15);
+        }
         app = null;
     }
 

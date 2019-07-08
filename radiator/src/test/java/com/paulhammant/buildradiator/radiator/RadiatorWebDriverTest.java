@@ -2,7 +2,8 @@ package com.paulhammant.buildradiator.radiator;
 
 import com.google.common.io.CharStreams;
 import com.paulhammant.buildradiator.radiator.model.Radiator;
-import org.jooby.Route;
+import io.jooby.Route;
+import io.jooby.Server;
 import org.junit.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -32,6 +33,7 @@ public class RadiatorWebDriverTest {
     private static int testNum;
 
     private TestVersionOfBuildRadiatorApp app;
+    private Server stoppable;
 
     @BeforeClass
     public static void sharedForAllTests() {
@@ -66,7 +68,7 @@ public class RadiatorWebDriverTest {
     @After
     public void stopServer() throws InterruptedException {
         //Thread.sleep(1000000);
-        app.stop();
+        stoppable.stop();
         app = null;
     }
 
@@ -190,7 +192,7 @@ public class RadiatorWebDriverTest {
     }
 
     private void startAppAndOpenWebDriverOnRadiatorPage(String path) {
-        app.start("server.join=false");
+        stoppable = app.start();
         while (!app.appStarted) {
             try {
                 Thread.sleep(15);

@@ -1,11 +1,12 @@
 package com.paulhammant.buildradiator.radiator;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paulhammant.buildradiator.radiator.model.*;
-import org.jooby.Err;
-import org.jooby.Jooby;
-import org.jooby.Request;
-import org.jooby.Response;
-import org.jooby.json.Jackson;
+import io.jooby.Context;
+import io.jooby.Jooby;
+import io.jooby.StatusCode;
+import io.jooby.json.JacksonModule;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class RadiatorApp extends Jooby {
@@ -16,16 +17,17 @@ public class RadiatorApp extends Jooby {
     public static final String VUE_COMPONENT = "radiator/radiator.vue";
 
     protected final RadiatorStore radiatorStore;
+    private RandomGenerator randomGenerator = new RandomGenerator();
 
     public static void main(final String[] args) {
-        Jooby.run(RadiatorApp::new, args);
+        runApp(args, RadiatorApp::new);
     }
 
     {
 
         String gae_appId = System.getenv("GCLOUD_PROJECT");
 
-        use(new Jackson());
+        install(new JacksonModule());
 
         if (gae_appId != null) {
             radiatorStore = new RadiatorStore.BackedByGoogleCloudDataStore();
@@ -33,13 +35,13 @@ public class RadiatorApp extends Jooby {
             radiatorStore = new RadiatorStore();
         }
 
-        before((req, rsp) -> {
+        before((ctx) -> {
             try {
-                if (gae_appId != null && req.header("X-Forwarded-Proto").value().equals("http")) {
-                    rsp.redirect("https://" + req.hostname() + req.path());
+                if (gae_appId != null && ctx.header("X-Forwarded-Proto").value().equals("http")) {
+                    ctx.sendRedirect("https://" + ctx.getHost() + ctx.path());
                 }
             } catch (Throwable throwable) {
-                rsp.send(req.path()+ " (before) " + throwable.getMessage());
+                ctx.send(ctx.path()+ " (before) " + throwable.getMessage());
             }
         });
 
@@ -48,24 +50,32 @@ public class RadiatorApp extends Jooby {
 
         path(getBasePath(), () -> {
             // used by radiator.html
-            get("/:radiatorCode/", this::getRadiatorByCode);
-            post("/:radiatorCode/stepPassed", this::stepPassed);
-            post("/:radiatorCode/stepFailed", this::stepFailed);
-            post("/:radiatorCode/startStep", this::startStep);
-            post("/:radiatorCode/buildCancelled", this::buildCancelled);
-            post("/:radiatorCode/updateIps", this::updateIps);
+            get("/{radiatorCode}/", this::getRadiatorByCode);
+            post("/{radiatorCode}/stepPassed", this::stepPassed);
+            post("/{radiatorCode}/stepFailed", this::stepFailed);
+            post("/{radiatorCode}/startStep", this::startStep);
+            post("/{radiatorCode}/buildCancelled", this::buildCancelled);
+            post("/{radiatorCode}/updateIps", this::updateIps);
             post("/create", this::createRadiator);
 
         });
 
-        err(RadiatorDoesntExist.class, (req, rsp, err) -> {
-            rsp.status(200);
-            nothingHere(req, rsp);
+        error(RadiatorDoesntExist.class, (ctx, cause, statusCode) -> {
+            ctx.setResponseCode(200);
+            ctx.setResponseType("application/json");
+            try {
+                ctx.send(new ObjectMapper().writeValueAsString(nothingHere(ctx)));
+            } catch (JsonProcessingException e) {
+                throw new UnsupportedOperationException(e);
+            }
         });
 
-        err(BuildRadiatorException.class, (req, rsp, err) -> {
-            rsp.status(200);
-            rsp.send(err.getCause().getMessage());
+        error(BuildRadiatorException.class, (ctx, cause, statusCode) -> {
+            ctx.send(cause.getMessage());
+        });
+
+        error(BuildRadiatorException.class, (ctx, cause, statusCode) -> {
+            ctx.send(cause.getMessage());
         });
 
 //        err(Err.Missing.class, (req, rsp, err) -> {
@@ -74,25 +84,24 @@ public class RadiatorApp extends Jooby {
 //            rsp.send(message.substring(message.indexOf(":")+2));
 //        });
 
-        err((req, rsp, err) -> {
-            rsp.status(200);
-            nothingHere(req, rsp);
+        error(StatusCode.NOT_FOUND, (ctx, cause, statusCode) -> {
+            System.out.println(ctx.path() + " page missing from " + ctx.getRemoteAddress());
+            ctx.setResponseCode(404);
+            ctx.send("");
         });
 
-        err(404, (req, rsp, err) -> {
-            System.out.println(req.route() + " page missing from " + req.ip());
-            rsp.status(404);
-            rsp.send("");
+        error((ctx, cause, statusCode) -> {
+            ctx.setResponseCode(200);
+            ctx.setResponseType("application/json");
+            ctx.render(nothingHere(ctx));
         });
 
-        err(405, (req, rsp, err) -> {
-            System.out.println(req.route() + " blocked from " + req.ip() + ", type:" + req.type());
-            rsp.status(404);
-            rsp.send("");
+        error(StatusCode.METHOD_NOT_ALLOWED, (ctx, cause, statusCode) -> {
+            System.out.println(ctx.path() + " blocked from " + ctx.getRemoteAddress() + ", type:" + ctx.getRequestType());
+            ctx.setResponseCode(404);
         });
 
-        onStart(this::starterData);
-
+        onStarted(this::starterData);
     }
 
     public String getBasePath() {
@@ -107,62 +116,62 @@ public class RadiatorApp extends Jooby {
         assets (getBasePath() + "/" + "radiator.vue", VUE_COMPONENT);
     }
 
-    protected void getRadiatorByCode(Request req, Response rsp) throws Throwable {
-        String lastUpdated = req.header("lastUpdated").value("");
+    protected Object getRadiatorByCode(Context ctx) {
+        String lastUpdated = ctx.header("lastUpdated").value("");
         if (!lastUpdated.equals("")) {
             lastUpdated = new Long(lastUpdated).toString(); // ensure is a number
         }
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        Radiator radiator = getResultsStore().get(radiatorCode, req.ip());
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
+        Radiator radiator = getResultsStore().get(radiatorCode, ctx.getRemoteAddress());
         if (lastUpdated.equals("" + radiator.lastUpdated)) {
-            rsp.status(204);
-            return;
+            ctx.setResponseCode(204);
+            return null;
         }
-        rsp.status(200).type("application/json").send(radiator.withoutSecret());
+        return radiator.withoutSecret();
     }
 
-    protected void startStep(Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String build = getBuildIdButVerifyParamFirst(req);
-        String step = getStepButVerifyParamFirst(req);
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        String secret = getRadiatorSecretButVerifyParamFirst(req);
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).startStep(build, step);
-        rsp.send("OK");
+    protected String startStep(Context ctx) {
+        ctx.setResponseType("text/plain");
+        String build = getBuildIdButVerifyParamFirst(ctx);
+        String step = getStepButVerifyParamFirst(ctx);
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
+        String secret = getRadiatorSecretButVerifyParamFirst(ctx);
+        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).startStep(build, step);
+        return "OK";
     }
 
-    protected void stepPassed(Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        String build = getBuildIdButVerifyParamFirst(req);
-        String step = getStepButVerifyParamFirst(req);
-        String secret = getRadiatorSecretButVerifyParamFirst(req);
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepPassed(build, step);
-        rsp.send("OK");
+    protected String stepPassed(Context ctx) {
+        ctx.setResponseType("text/plain");
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
+        String build = getBuildIdButVerifyParamFirst(ctx);
+        String step = getStepButVerifyParamFirst(ctx);
+        String secret = getRadiatorSecretButVerifyParamFirst(ctx);
+        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).stepPassed(build, step);
+        return "OK";
     }
 
-    private String getRadiatorCodeButVerifyParamFirst(Request req) {
-        return getParamStringAndVerify(req, "radiatorCode", 21);
+    private String getRadiatorCodeButVerifyParamFirst(Context ctx) {
+        return verifyNotTooLong("radiatorCode", 21, ctx.path("radiatorCode").value());
     }
 
-    private String getBuildIdButVerifyParamFirst(Request req) {
-        return getParamStringAndVerify(req, "build", 12);
+    private String getBuildIdButVerifyParamFirst(Context ctx) {
+        return getParamStringAndVerify(ctx, "build", 12);
     }
 
-    private String getRadiatorSecretButVerifyParamFirst(Request req) {
-        return getParamStringAndVerify(req, "secret", 12);
+    private String getRadiatorSecretButVerifyParamFirst(Context ctx) {
+        return getParamStringAndVerify(ctx, "secret", 12);
     }
 
-    private String getStepButVerifyParamFirst(Request req) {
-        return getParamStringAndVerify(req, "step", 21);
+    private String getStepButVerifyParamFirst(Context ctx) {
+        return getParamStringAndVerify(ctx, "step", 21);
     }
 
-    private String getPreviousStepButVerifyParamFirst(Request req) {
-        return getParamStringAndVerify(req, "pStep", 21);
+    private String getPreviousStepButVerifyParamFirst(Context ctx) {
+        return getParamStringAndVerify(ctx, "pStep", 21);
     }
 
-    private String getParamStringAndVerify(Request req, String name, int len) {
-        return verifyNotTooLong(name, len, req.param(name).value());
+    private String getParamStringAndVerify(Context ctx, String name, int len) {
+        return verifyNotTooLong(name, len, ctx.form(name).value());
     }
 
     private String verifyNotTooLong(String name, int len, String val) {
@@ -172,55 +181,56 @@ public class RadiatorApp extends Jooby {
         return val;
     }
 
-    protected void stepFailed(Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String step = getStepButVerifyParamFirst(req);
-        String build = getBuildIdButVerifyParamFirst(req);
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        String secret = getRadiatorSecretButVerifyParamFirst(req);
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).stepFailed(build, step);
-        rsp.send("OK");
+    protected String stepFailed(Context ctx) {
+        ctx.setResponseType("text/plain");
+        String step = getStepButVerifyParamFirst(ctx);
+        String build = getBuildIdButVerifyParamFirst(ctx);
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
+        String secret = getRadiatorSecretButVerifyParamFirst(ctx);
+        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).stepFailed(build, step);
+        return "OK";
     }
 
-    protected void updateIps (Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        String secret = getRadiatorSecretButVerifyParamFirst(req);
-        String[] ips = req.param("ips").value("").split(",");
+    protected String updateIps (Context ctx) {
+        ctx.setResponseType("text/plain");
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
+        String secret = getRadiatorSecretButVerifyParamFirst(ctx);
+        String[] ips = ctx.form("ips").value("").split(",");
         if (ips.length == 1 && ips[0].equals("")) {
             ips = new String[0];
         }
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).updateIps(ips);
+        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).updateIps(ips);
 
-        rsp.send("OK");
+        return "OK";
     }
 
-    protected void buildCancelled(Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String radiatorCode = getRadiatorCodeButVerifyParamFirst(req);
-        String secret = getRadiatorSecretButVerifyParamFirst(req);
-        getResultsStore().get(radiatorCode, req.ip()).verifySecret(secret).cancel(req.param("build").value());
-        rsp.send("OK");
+    protected String buildCancelled(Context ctx) {
+        ctx.setResponseType("text/plain");
+        String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
+        String secret = getRadiatorSecretButVerifyParamFirst(ctx);
+        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).cancel(ctx.form("build").value());
+        return "OK";
     }
 
-    protected void createRadiator(Request req, Response rsp) throws Throwable {
-        rsp.type("text/plain");
-        String[] stepNames = req.param("stepNames").value()
+    protected Object createRadiator(Context ctx) {
+        ctx.setResponseType("text/plain");
+        String[] stepNames = ctx.form("stepNames").value()
                 .replace("_", " ").split(",");
         for (String stepName : stepNames) {
             verifyNotTooLong("a stepName", 21, stepName);
         }
-        String[] ips = req.param("ips").value("").split(",");
+        String[] ips = ctx.form("ips").value("").split(",");
         if (ips.length == 1 && ips[0].equals("")) {
             ips = new String[0];
         }
-        rsp.type("application/json");
-        rsp.send(getResultsStore().createRadiator(require(RandomGenerator.class), stepNames)
-                .withIpAccessRestrictedToThese(ips).codeAndSecretOnly());
+        ctx.setResponseType("application/json");
+        return getResultsStore().createRadiator(randomGenerator, stepNames)
+                .withIpAccessRestrictedToThese(ips).codeAndSecretOnly();
     }
 
-    protected void nothingHere(Request req, Response rsp) throws Throwable {
-        rsp.type("application/json").send(new ErrorMessage().withEgressIpAddress(req.ip()));
+    protected Object nothingHere(Context ctx) {
+        ctx.setResponseType("application/json");
+        return new ErrorMessage().withEgressIpAddress(ctx.getRemoteAddress());
     }
 
     public static class ErrorMessage {

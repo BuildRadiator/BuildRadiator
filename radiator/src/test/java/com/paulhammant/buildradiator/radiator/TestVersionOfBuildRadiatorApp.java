@@ -3,7 +3,8 @@ package com.paulhammant.buildradiator.radiator;
 import com.google.common.io.CharStreams;
 import com.paulhammant.buildradiator.radiator.model.Radiator;
 import com.paulhammant.buildradiator.staticresources.BuildRadiatorStaticResources;
-import org.jooby.Route;
+import io.jooby.Route;
+import io.jooby.Router;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +29,7 @@ public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
     }
 
     protected boolean appStarted;
+    protected boolean appStopped;
 
     public TestVersionOfBuildRadiatorApp(Radiator testRadiator) {
         this.fasterRefresh = fasterRefresh;
@@ -37,6 +39,10 @@ public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
             }
             appStarted = true;
             deleteDefaultRadiator();
+        });
+        onStop(() -> {
+            appStopped = true;
+
         });
     }
 
@@ -48,7 +54,7 @@ public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
     @Override
     protected void serveRadiatorPage() {
 
-        get(getBasePath() + "/", (request, response) -> {
+        get(getBasePath() + "/", (ctx) -> {
             String page = getStringFromResource(HTML_PAGE);
             // change from minified Vue to non-minified to allow in-page debugging
             page = page.replace("vue.min.js", "vue.js");
@@ -56,26 +62,26 @@ public class TestVersionOfBuildRadiatorApp extends RadiatorApp {
             if (fasterRefresh) {
                 page = page.replace("30000", "300");
             }
-            response.type("text/html");
-            response.send(page);
+            ctx.setResponseType("text/html");
+            return page;
         });
 
     }
 
     @Override
     protected void serveRadiatorComponent() {
-        get(getBasePath() + "/" + "radiator.vue", (request, response) -> {
+        get(getBasePath() + "/" + "radiator.vue", (ctx) -> {
             String page = getStringFromResource(VUE_COMPONENT);
             page = page.replace("</div>\n</template>", "<h2>For Testing:</h2><pre>{{ rad }}</pre>\n</div>\n</template>");
             page = page.replace("id=\"radiator\" style=\"", "id=\"radiator\" style=\"border: 1px solid red; ");
-            response.type("text/vue");
-            response.send(page);
+            ctx.setResponseType("text/vue");
+            return page;
         });
     }
 
 
     protected String getStringFromResource(String file) throws IOException {
-        file = Route.normalize(file);
+        file = Router.normalizePath(file, false, false);
         InputStream stream = getClass().getResourceAsStream(file);
         return CharStreams.toString(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }

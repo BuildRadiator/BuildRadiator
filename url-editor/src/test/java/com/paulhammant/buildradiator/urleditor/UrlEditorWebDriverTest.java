@@ -76,7 +76,7 @@ public class UrlEditorWebDriverTest {
     @Test
     public void editorCanChangeTitleAndStepDescriptionsFromDemoRadiatorAndReturn() {
         app = new TestVersionOfEditorApp() {{
-            get("/r", () -> "<html><body>OK</body></html>");
+            get("/r", (ctx) -> "<html><body>OK</body></html>");
         }};
 
         startAppAndOpenWebDriverOnEditorPage(CONTRIVED_PATH_FOR_TESTING + "#ueeusvcipmtsb755uq/Example_Build_Radiator/c/compile/u/unit_tests/i/integration_tests/f/functional_tests/p/package");
@@ -88,7 +88,7 @@ public class UrlEditorWebDriverTest {
     }
 
     private void startAppAndOpenWebDriverOnEditorPage(String path) {
-        app.start("server.join=false");
+        app.start();
         while (!app.appStarted) {
             try {
                 Thread.sleep(15);

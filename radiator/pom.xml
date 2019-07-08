@@ -5,9 +5,9 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.jooby</groupId>
+    <groupId>io.jooby</groupId>
     <artifactId>jooby-project</artifactId>
-    <version>1.6.2</version>
+    <version>2.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>com.paulhammant</groupId>
@@ -47,7 +47,7 @@
 
     <!-- Server -->
     <dependency>
-      <groupId>org.jooby</groupId>
+      <groupId>io.jooby</groupId>
       <artifactId>jooby-netty</artifactId>
       <exclusions>
         <exclusion>
@@ -70,19 +70,22 @@
     </dependency>
 
     <dependency>
-      <groupId>org.jooby</groupId>
+      <groupId>io.jooby</groupId>
       <artifactId>jooby-jackson</artifactId>
+      <version>${jooby.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>org.jooby</groupId>
-      <artifactId>jooby</artifactId>
-      <classifier>tests</classifier>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>io.jooby</groupId>-->
+<!--      <artifactId>jooby</artifactId>-->
+<!--      <classifier>tests</classifier>-->
+<!--      <version>${jooby.version}</version>-->
+<!--    </dependency>-->
 
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>fluent-hc</artifactId>
+      <version>4.5.5</version>
       <scope>test</scope>
     </dependency>
 
@@ -90,18 +93,21 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
+      <version>1.2.3</version>
     </dependency>
 
     <!-- Tests -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <version>4.12</version>
       <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>io.rest-assured</groupId>
       <artifactId>rest-assured</artifactId>
+      <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
 
