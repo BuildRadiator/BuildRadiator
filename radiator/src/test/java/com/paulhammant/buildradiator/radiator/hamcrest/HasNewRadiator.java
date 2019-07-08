@@ -23,7 +23,8 @@ public class HasNewRadiator {
                     createdRadiator.code = cr.code;
                     createdRadiator.secret = cr.secret;
                 } catch (IOException e) {
-                    fail("IOE encountered " + e.getMessage());
+                    System.out.println("Error: Jackson couldn't parse JSON into 'CreatedRadiator' instance: " + o);
+                    return false;
                 }
                 return true;
             }
