@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.paulhammant.buildradiator.radiator.model.*;
 import io.jooby.Context;
 import io.jooby.Jooby;
+import io.jooby.RouterOptions;
 import io.jooby.StatusCode;
 import io.jooby.json.JacksonModule;
 
@@ -47,6 +48,8 @@ public class RadiatorApp extends Jooby {
 
         serveRadiatorPage();
         serveRadiatorComponent();
+
+        setRouterOptions(new RouterOptions().setIgnoreTrailingSlash(true));
 
         path(getBasePath(), () -> {
             // used by radiator.html
