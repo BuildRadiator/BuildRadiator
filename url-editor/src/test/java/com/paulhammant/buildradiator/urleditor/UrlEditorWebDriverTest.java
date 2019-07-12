@@ -1,5 +1,6 @@
 package com.paulhammant.buildradiator.urleditor;
 
+import io.jooby.Server;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -12,6 +13,7 @@ import org.seleniumhq.selenium.fluent.FluentWebElements;
 
 import static com.paulhammant.buildradiator.urleditor.TestVersionOfEditorApp.CONTRIVED_PATH_FOR_TESTING;
 import static org.junit.Assert.assertEquals;
+import static org.seleniumhq.selenium.fluent.Period.secs;
 
 public class UrlEditorWebDriverTest {
 
@@ -20,6 +22,7 @@ public class UrlEditorWebDriverTest {
     private static int testNum;
 
     private TestVersionOfEditorApp app;
+    private Server stoppable;
 
     @BeforeClass
     public static void sharedForAllTests() {
@@ -45,17 +48,16 @@ public class UrlEditorWebDriverTest {
 
     @Before
     public void perTest() {
-        // anySubDomainOf.devd.io maps to 127.0.0.1
+        // anySubDomainOf.localhost maps to 127.0.0.1
         // I sure hope those people don't let the domain go, or remap it
         // it is a decent way to ensure nothing is shared between tests (mostly)
-        domain = "http://t" + testNum++ + ".devd.io:8080";
+        domain = "http://t" + testNum++ + ".localhost:8080";
         //domain = "http://localhost:8080";
     }
 
     @After
     public void stopServer() throws InterruptedException {
-        //Thread.sleep(1000000);
-        app.stop();
+        stoppable.stop();
         app = null;
     }
 
@@ -63,7 +65,7 @@ public class UrlEditorWebDriverTest {
     public void editorDisplayRemovesUnderScoresFromContrivedTitle() {
         app = new TestVersionOfEditorApp();
         startAppAndOpenWebDriverOnEditorPage(CONTRIVED_PATH_FOR_TESTING + "#abcde12345/a_contrived_title/0/a_a/1/b_b/2/c_c");
-        FWD.div().getText().shouldContain("a contrived title");
+        FWD.div().getText().within(secs(3)).shouldContain("a contrived title");
         FluentWebElements lis = FWD.lis();
         lis.get(0).getText().shouldContain("0:");
         lis.get(0).input().getAttribute("value").shouldContain("a a");
@@ -88,7 +90,7 @@ public class UrlEditorWebDriverTest {
     }
 
     private void startAppAndOpenWebDriverOnEditorPage(String path) {
-        app.start();
+        stoppable = app.start();
         while (!app.appStarted) {
             try {
                 Thread.sleep(15);

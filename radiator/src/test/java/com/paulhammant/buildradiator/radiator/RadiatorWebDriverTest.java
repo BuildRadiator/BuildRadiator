@@ -24,6 +24,7 @@ import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.seleniumhq.selenium.fluent.Period.millis;
 import static org.seleniumhq.selenium.fluent.Period.secs;
 
 public class RadiatorWebDriverTest {
@@ -58,10 +59,10 @@ public class RadiatorWebDriverTest {
 
     @Before
     public void perTest() {
-        // anySubDomainOf.devd.io maps to 127.0.0.1
+        // anySubDomainOf.localhost maps to 127.0.0.1
         // I sure hope those people don't let the domain go, or remap it
         // it is a decent way to ensure nothing is shared between tests (mostly)
-        domain = "http://t" + testNum++ + ".devd.io:8080";
+        domain = "http://t" + testNum++ + ".localhost:8080";
         //domain = "http://localhost:8080";
     }
 
@@ -78,13 +79,15 @@ public class RadiatorWebDriverTest {
         Radiator rad = rad("xxx", "sseeccrreett", stepNames("A", "B", "C"),
                 build("2", "running", 2000, step("A", 2000, "running"), step("B"), step("C")),
                 build("1", "running", 4000, step("A", 4000, "failed"), skip("B"), skip("C")))
-                .withIpAccessRestrictedToThese("127.0.0.1", "111.222.33.44");
+                .withIpAccessRestrictedToThese("0:0:0:0:0:0:0:1", "127.0.0.1", "111.222.33.44");
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
-        FWD.td().getText().within(secs(1)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
+        FWD.td().getText().within(secs(3)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
+
+        FWD.body().getText().within(secs(8000)).shouldContain("(running)");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nA\n2 secs\n(running) B\n0 secs\nC\n0 secs");
         FWD.trs().get(2).getText().shouldBe("1\n4 secs\nA\n4 secs\n(failed) B\n0 secs\n(skipped) C\n0 secs\n(skipped)");
     }
@@ -98,7 +101,7 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/");
 
-        FWD.td().getText().within(secs(2)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
+        FWD.td().getText().within(secs(3)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
         FWD.url().shouldMatch(endsWith("Trunk_Build/")); // unchanged
     }
 
@@ -109,7 +112,7 @@ public class RadiatorWebDriverTest {
         Radiator rad = rad("xxx", "sseeccrreett", stepNames("A", "B", "C"),
                 build("2", "running", 2000, step("A", 2000, "running"), step("B"), step("C")),
                 build("1", "running", 4000, step("A", 4000, "failed"), skip("B"), skip("C")))
-                .withIpAccessRestrictedToThese("127.0.0.1", "111.222.33.44");
+                .withIpAccessRestrictedToThese("0:0:0:0:0:0:0:1", "127.0.0.1", "111.222.33.44");
 
         app = new TestVersionOfBuildRadiatorApp(rad);
 
@@ -131,7 +134,7 @@ public class RadiatorWebDriverTest {
         text.shouldContain("Radiator code missing_radiator_code not recognized");
         text.shouldContain("Did you type it correctly?");
         text.shouldContain("Maybe the radiator DOES exist but this egress");
-        text.shouldContain("TCP/IP address (127.0.0.1) is not allowed");
+        text.shouldContain("TCP/IP address (0:0:0:0:0:0:0:1) is not allowed");
     }
 
     @Test
