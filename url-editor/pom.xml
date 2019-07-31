@@ -24,7 +24,7 @@
   </licenses>
 
   <properties>
-    <jooby.version>2.0.2</jooby.version>
+    <jooby.version>2.0.3</jooby.version>
     <netty.version>4.1.37.Final</netty.version>
   </properties>
 
