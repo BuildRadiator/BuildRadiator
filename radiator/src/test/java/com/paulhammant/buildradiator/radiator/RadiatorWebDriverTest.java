@@ -150,7 +150,7 @@ public class RadiatorWebDriverTest {
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
         final FluentWebElement rootDiv = FWD.within(secs(2)).div();
-        rootDiv.getText().shouldContain("(running)");
+        rootDiv.getText().within(secs(2)).shouldContain("(running)");
         rad.stepPassed("1", "A");
         FWD.trs().get(1).getText().within(secs(4)).shouldContain("(passed)");
         rootDiv.getText().shouldNotContain("(running)");
