@@ -85,6 +85,7 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build");
 
+        FWD.trs().getText().within(secs(2)).shouldContain("Main Project Trunk");
         FWD.td().getText().within(secs(3)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
 
         FWD.body().getText().within(secs(8000)).shouldContain("(running)");
