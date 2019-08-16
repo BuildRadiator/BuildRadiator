@@ -119,6 +119,7 @@ public class RadiatorWebDriverTest {
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#xxx/Main_Project_Trunk_Build/A/Ant/B/Bat/C/Clever_Cat");
 
         FWD.td().getText().within(secs(2)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
+        FWD.trs().getText().within(secs(2)).shouldContain("running");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nAnt\n2 secs\n(running) Bat\n0 secs\nClever Cat\n0 secs");
         FWD.trs().get(2).getText().shouldBe("1\n4 secs\nAnt\n4 secs\n(failed) Bat\n0 secs\n(skipped) Clever Cat\n0 secs\n(skipped)");
     }
