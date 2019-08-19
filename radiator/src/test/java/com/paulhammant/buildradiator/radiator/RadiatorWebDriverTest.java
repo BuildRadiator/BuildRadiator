@@ -88,7 +88,7 @@ public class RadiatorWebDriverTest {
         FWD.trs().getText().within(secs(2)).shouldContain("Main Project Trunk");
         FWD.td().getText().within(secs(3)).shouldBe("Main Project Trunk Build\nchange URL to customize the title ↑ or step codes ↓ Edit the title and step descriptions");
 
-        FWD.body().getText().within(secs(8000)).shouldContain("(running)");
+        FWD.body().getText().within(secs(2)).shouldContain("(running)");
         FWD.trs().get(1).getText().shouldBe("2\n2 secs\nA\n2 secs\n(running) B\n0 secs\nC\n0 secs");
         FWD.trs().get(2).getText().shouldBe("1\n4 secs\nA\n4 secs\n(failed) B\n0 secs\n(skipped) C\n0 secs\n(skipped)");
     }
@@ -133,7 +133,7 @@ public class RadiatorWebDriverTest {
 
         startAppAndOpenWebDriverOnRadiatorPage(CONTRIVED_PATH_FOR_TESTING + "#missing_radiator_code/Main_Project_Trunk_Build");
 
-        TestableString text = FWD.div().getText();
+        TestableString text = FWD.div().within(secs(2)).getText();
         text.shouldContain("Radiator code missing_radiator_code not recognized");
         text.shouldContain("Did you type it correctly?");
         text.shouldContain("Maybe the radiator DOES exist but this egress");

@@ -88,7 +88,7 @@ public class RadiatorApp extends Jooby {
 //        });
 
         error(StatusCode.NOT_FOUND, (ctx, cause, statusCode) -> {
-            System.out.println(ctx.path() + " page missing from " + ctx.getRemoteAddress());
+            System.out.println(ctx.path() + " page missing from " + fixRemoteAddress(ctx.getRemoteAddress()));
             ctx.setResponseCode(404);
             ctx.send("");
         });
@@ -100,11 +100,21 @@ public class RadiatorApp extends Jooby {
         });
 
         error(StatusCode.METHOD_NOT_ALLOWED, (ctx, cause, statusCode) -> {
-            System.out.println(ctx.path() + " blocked from " + ctx.getRemoteAddress() + ", type:" + ctx.getRequestType());
+            System.out.println(ctx.path() + " blocked from " + fixRemoteAddress(ctx.getRemoteAddress()) + ", type:" + ctx.getRequestType());
             ctx.setResponseCode(404);
         });
 
         onStarted(this::starterData);
+    }
+
+    /**
+     * To delete after https://github.com/jooby-project/jooby/issues/1371 is resolved.
+     */
+    private static String fixRemoteAddress(String remoteAddress) {
+        if (remoteAddress.contains("%")) {
+            remoteAddress = remoteAddress.substring(0, remoteAddress.indexOf("%"));
+        }
+        return remoteAddress;
     }
 
     public String getBasePath() {
@@ -125,7 +135,7 @@ public class RadiatorApp extends Jooby {
             lastUpdated = new Long(lastUpdated).toString(); // ensure is a number
         }
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
-        Radiator radiator = getResultsStore().get(radiatorCode, ctx.getRemoteAddress());
+        Radiator radiator = getResultsStore().get(radiatorCode, fixRemoteAddress(ctx.getRemoteAddress()));
         if (lastUpdated.equals("" + radiator.lastUpdated)) {
             ctx.setResponseCode(204);
             return null;
@@ -139,7 +149,7 @@ public class RadiatorApp extends Jooby {
         String step = getStepButVerifyParamFirst(ctx);
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
         String secret = getRadiatorSecretButVerifyParamFirst(ctx);
-        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).startStep(build, step);
+        getResultsStore().get(radiatorCode, fixRemoteAddress(ctx.getRemoteAddress())).verifySecret(secret).startStep(build, step);
         return "OK";
     }
 
@@ -149,7 +159,7 @@ public class RadiatorApp extends Jooby {
         String build = getBuildIdButVerifyParamFirst(ctx);
         String step = getStepButVerifyParamFirst(ctx);
         String secret = getRadiatorSecretButVerifyParamFirst(ctx);
-        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).stepPassed(build, step);
+        getResultsStore().get(radiatorCode, fixRemoteAddress(ctx.getRemoteAddress())).verifySecret(secret).stepPassed(build, step);
         return "OK";
     }
 
@@ -190,7 +200,7 @@ public class RadiatorApp extends Jooby {
         String build = getBuildIdButVerifyParamFirst(ctx);
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
         String secret = getRadiatorSecretButVerifyParamFirst(ctx);
-        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).stepFailed(build, step);
+        getResultsStore().get(radiatorCode, fixRemoteAddress(ctx.getRemoteAddress())).verifySecret(secret).stepFailed(build, step);
         return "OK";
     }
 
@@ -202,7 +212,7 @@ public class RadiatorApp extends Jooby {
         if (ips.length == 1 && ips[0].equals("")) {
             ips = new String[0];
         }
-        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).updateIps(ips);
+        getResultsStore().get(radiatorCode, fixRemoteAddress(ctx.getRemoteAddress())).verifySecret(secret).updateIps(ips);
 
         return "OK";
     }
@@ -211,7 +221,7 @@ public class RadiatorApp extends Jooby {
         ctx.setResponseType("text/plain");
         String radiatorCode = getRadiatorCodeButVerifyParamFirst(ctx);
         String secret = getRadiatorSecretButVerifyParamFirst(ctx);
-        getResultsStore().get(radiatorCode, ctx.getRemoteAddress()).verifySecret(secret).cancel(ctx.form("build").value());
+        getResultsStore().get(radiatorCode, fixRemoteAddress(ctx.getRemoteAddress())).verifySecret(secret).cancel(ctx.form("build").value());
         return "OK";
     }
 
@@ -233,7 +243,7 @@ public class RadiatorApp extends Jooby {
 
     protected Object nothingHere(Context ctx) {
         ctx.setResponseType("application/json");
-        return new ErrorMessage().withEgressIpAddress(ctx.getRemoteAddress());
+        return new ErrorMessage().withEgressIpAddress(fixRemoteAddress(ctx.getRemoteAddress()));
     }
 
     public static class ErrorMessage {
