@@ -4,12 +4,25 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>io.jooby</groupId>
+        <artifactId>jooby-project</artifactId>
+        <version>2.0.5</version>
+    </parent>
+
     <groupId>com.paulhammant</groupId>
     <artifactId>buildradiator-parent</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Build Radiator Parent</name>
+
+    <properties>
+        <jooby.version>2.0.5</jooby.version>
+        <netty.version>4.1.38.Final</netty.version>
+        <apache-fluent-hc.version>4.5.9</apache-fluent-hc.version>
+        <selenium.version>4.0.0-alpha-2</selenium.version>
+    </properties>
 
     <description>Build Radiator Site - Parent</description>
     <url>http://github.com/BuildRadiator/BuildRadiator</url>

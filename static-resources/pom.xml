@@ -5,19 +5,16 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>io.jooby</groupId>
-    <artifactId>jooby-project</artifactId>
-    <version>2.0.5</version>
+    <groupId>com.paulhammant</groupId>
+    <artifactId>buildradiator-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>com.paulhammant</groupId>
   <artifactId>buildradiator-static-resources</artifactId>
-  <version>1.0-SNAPSHOT</version>
 
   <name>Build Radiator Static Web Resources</name>
 
   <properties>
-    <jooby.version>${project.parent.version}</jooby.version>
   </properties>
 
   <dependencies>
@@ -26,6 +23,7 @@
     <dependency>
       <groupId>io.jooby</groupId>
       <artifactId>jooby-netty</artifactId>
+      <version>${jooby.version}</version>
       <exclusions>
         <exclusion>
           <groupId>io.netty</groupId>
@@ -74,7 +72,6 @@
         <dependency>
           <groupId>io.netty</groupId>
           <artifactId>netty-transport-native-epoll</artifactId>
-          <version>${netty.version}</version>
           <classifier>linux-x86_64</classifier>
         </dependency>
       </dependencies>
@@ -88,7 +85,6 @@
         <dependency>
           <groupId>io.netty</groupId>
           <artifactId>netty-transport-native-epoll</artifactId>
-          <version>${netty.version}</version>
         </dependency>
       </dependencies>
     </profile>

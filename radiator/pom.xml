@@ -24,8 +24,6 @@
   </licenses>
 
   <properties>
-    <jooby.version>2.0.5</jooby.version>
-    <netty.version>4.1.38.Final</netty.version>
     <application.class>com.paulhammant.buildradiator.main.BuildRadiatorMain</application.class>
     <!--<buildradiator.trace>true</buildradiator.trace>-->
     <buildradiator.0>Compile=*</buildradiator.0>
@@ -85,7 +83,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>fluent-hc</artifactId>
-      <version>4.5.5</version>
+      <version>${apache-fluent-hc.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -120,7 +118,7 @@
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
-      <version>3.141.59</version>
+      <version>${selenium.version}</version>
       <scope>test</scope>
     </dependency>
 
